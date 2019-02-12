@@ -1,0 +1,259 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+
+<style>
+  body {
+    font-family: Courier;
+  }
+  .toolbar {
+    /*float: left;*/
+    width: 100%;
+    height: 3em;
+  }
+  .toolbar a {
+    margin-right: 2em;
+  }
+  #table {
+
+  }
+  #table .row:nth-child(even) {background: #CCC}
+
+  #table div {
+    float: left;
+    width: 7em;
+    text-align: right;
+    font-size: 13px;
+  }
+
+
+  #log {
+    margin-bottom: 2em;
+    font-size: 11px;
+    color: #999;
+  }
+</style>
+
+<script type="text/javascript">
+  // Configuration (move later)
+  transitions = new Array("status", "Sprint");
+  // Global data array
+  data = {'nodes': []};
+
+  function loadStorage() {
+    data = window.localStorage.getItem("nodes");
+    if(data) {
+      data = JSON.parse(data);
+    }
+    else {
+      data = {'nodes': []};
+    }
+  }
+
+  function saveStorage() {
+    window.localStorage.setItem("nodes", JSON.stringify(data));
+  }
+
+  function purgeStorage() {
+    data = {'nodes': []};
+    saveStorage();
+  }
+
+  function processInput() {
+    json = JSON.parse($("#in").val());
+    if(json) {
+      item = {'id': json.key, 'created': json.fields.created, 'history': [], 'drop': false};
+      //console.log(json.id);
+      //console.log(json);
+      for(i = 0; i < json.changelog.histories.length;i++) {
+        cl = json.changelog.histories[i];
+        if(transitions.includes(cl.items[0].field)) {
+          item['history'].push({'type': cl.items[0].field, 'date': cl.created, 'from': cl.items[0].fromString, 'to': cl.items[0].toString});
+        }
+      }
+      addOrUpdateItem(item);
+      saveStorage();
+      drawTable();
+    }
+  }
+
+  function getItem(key) {
+    for(i = 0; i < data.nodes.length; i++) {
+      if(data.nodes[i].id == key)
+        return data.nodes[i];
+    }
+    return null;
+  }
+
+  function setItem(item) {
+    for(i = 0; i < data.nodes.length; i++) {
+      if(data.nodes[i].id == item.id) {
+        data.nodes[i] = item;
+        return true;
+      }
+    }
+    data.nodes.push(item);
+  }
+
+  function historyMatch(item, hist) {
+    for(i = 0; i < item['history'].length; i++) {
+      if(item['history'][i].type == hist.type && item['history'][i].date == hist.date)
+        return true;
+    }
+    return false;
+  }
+
+  function addOrUpdateItem(item) {
+    exItem = getItem(item.id);
+    if(exItem) {
+      // Merge data
+      //console.log("Old item found - merging")
+      for(i = 0; i < item['history'].length; i++) {
+        hist = item['history'][i];
+        if(!historyMatch(exItem, hist))
+          exItem['history'].push(hist);
+      }
+      setItem(exItem);
+    }
+    else {
+      data.nodes.push(item);
+    }
+  }
+
+  function drawTable() {
+    $("#out").empty();
+    $("#out").append("<p>Data points (history points)</p>")
+    $("#table").empty();
+    $("#table").append("<div style=\"clear:both\">KEY</div><div>Created</div><div>Backlog</div><div>Upstream</div><div>Committed</div><div>In dev</div><div>In test</div><div>Lead time</div><div>Delivered</div><div>Deployed</div");
+    for(i = 0; i < data.nodes.length; i++) {
+      item = data.nodes[i];
+      hist = getHistoryPoints(item);
+
+      $("#out").append("<p>" + item.id + " (" + item.history.length + ")</p>");
+
+      if(validItem(item, hist)) {
+        $("#table").append("<div class=\"row\"><div style=\"clear:both\">" + item.id + "[<a href=\"javascript:drop('" + item.id + "');void(drawTable())\">X</a>]</div><div>" + shortDate(item.created) + "</div>");
+
+        $("#table").append("<div title=\"" + shortDate(hist.upstream) + "\">" + dateDiff(item.created, hist.upstream) + "</div><div>" + dateDiff(hist.upstream, hist.committed) + "</div><div>" + shortDate(hist.committed) + "</div>");
+        $("#table").append("<div title=\"" + shortDate(hist.committed)  + "\">" + dateDiff(hist.committed, hist.test) + "</div><div>" + dateDiff(hist.test, hist.delivered) + "</div><div>" + dateDiff(hist.committed, hist.delivered)
+          + "</div><div>" + shortDate(hist.delivered) + "</div><div>" + shortDate(hist.deployed) + "</div></div>");
+      }
+      else {
+        log("Item dropped " + item.id)
+      }
+    }
+  }
+
+  function validItem(item, hist) {
+    if('drop' in item && item.drop)
+      return false;
+    if(!hist.committed)
+      return false;
+    if(dateDiff(hist.committed, hist.delivered) < 5)
+      return false;
+    return true;
+  }
+
+  function drop(key) {
+    i = getItem(key);
+    i['drop'] = true;
+    setItem(i);
+  }
+
+  // Following code will need configuration / cleanup
+  function getHistoryPoints(item) {
+    hist = {'upstream': null, 'committed': null, 'test': null, 'delivered': null, 'deployed': null};
+    for(j = 0; j < item.history.length; j++) {
+      h = item.history[j];
+      if(h.to == "Discovery")
+        hist.upstream = h.date;
+      if(h.to == "Ready for development" || h.from == "Ready for development")
+        hist.committed = h.date;
+      if(h.to == "SIT" || h.to == "UAT") {
+        if(hist.test == null || Date.parse(hist.test) <= Date.parse(h.date))
+          hist.test = h.date;
+      }
+      if(h.to == "Ready for production")
+        hist.delivered = h.date;
+      if(h.to == "Done")
+          hist.deployed = h.date;
+    }
+    return hist;
+  }
+
+  // Change views
+  function view(v) {
+    // Hide all
+    //$("#log").empty();
+    $("#input").hide();
+    $("#out").hide();
+    $("#table").hide();
+
+    if(v == "input") {
+      $("#input").show();
+      $("#out").show();
+    }
+    if(v == "table") {
+      $("#table").show();
+    }
+  }
+
+  function shortDate(dt) {
+    if(dt && dt != "0") {
+      dt = new Date(Date.parse(dt));
+      return dt.getDate() + "." + (parseInt(dt.getMonth()) + 1) + "." + dt.getFullYear();
+    }
+    return "";
+  }
+
+  function dateDiff(dtA, dtB) {
+    //console.log(dtA + "-" + dtB);
+    dtA = new Date(Date.parse(dtA));
+    dtB = new Date(Date.parse(dtB));
+    if(!(dtB instanceof Date) || isNaN(dtB))
+      dtB = new Date();
+
+    var oneDay = 24*60*60*1000;
+
+    return Math.round(Math.abs((dtB.getTime() - dtA.getTime())/(oneDay)));
+  }
+
+  function log(msg) {
+    $("#log").append("<div>" + msg + "</div>");
+    //$("#log").fadeOut(60*60);
+  }
+
+  /*
+  dt = new Date(Date.parse(data.nodes[0].created));
+
+  var day = date.getDate();
+ var monthIndex = date.getMonth();
+ var year = date.getFullYear();
+
+ */
+
+</script>
+</head>
+
+<body>
+  <div class="toolbar"><a href="javascript:void(view('input'));">Input</a>  <a href="javascript:void(view('table'));">Table</a> <a href="javascript:void(view('graph'));">Graph</a></div>
+  <div id="log" onclick="$('#log').empty();">&nbsp;</div>
+  <div id="input" style="background-color:#DDD">
+    <p>Enter JIRA JSON</p>
+    <textarea id="in"></textarea>
+    <input type="submit" onclick="processInput()" value="Process" />
+
+  </div>
+
+  <div id="out" style="font-family:Courier">&nbsp;</div>
+
+  <div id="table">&nbsp;
+  </div>
+
+  <script type="text/javascript">
+    loadStorage();
+    drawTable();
+    view("input");
+  </script>
+</body>
+</html>
