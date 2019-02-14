@@ -124,7 +124,7 @@
     $("#out").empty();
     $("#out").append("<p>Data points (history points)</p>")
     $("#table").empty();
-    $("#table").append("<div style=\"clear:both\">KEY</div><div>Created</div><div>Backlog</div><div>Upstream</div><div>Committed</div><div>In dev</div><div>In test</div><div>Lead time</div><div>Delivered</div><div>Deployed</div");
+    tabHtml = ("<table><tr><th>-</th><th>KEY</th><th>Created</th><th>Backlog</th><th>Upstream</th><th>Committed</th><th>In dev</th><th>In test</th><th>Lead time</th><th>Delivered</th><th>Deployed</th></tr>");
     for(i = 0; i < data.nodes.length; i++) {
       item = data.nodes[i];
       hist = getHistoryPoints(item);
@@ -132,16 +132,18 @@
       $("#out").append("<p>" + item.id + " (" + item.history.length + ")</p>");
 
       if(validItem(item, hist)) {
-        $("#table").append("<div class=\"row\"><div style=\"clear:both\">" + item.id + "[<a href=\"javascript:drop('" + item.id + "');void(drawTable())\">X</a>]</div><div>" + shortDate(item.created) + "</div>");
+        tabHtml += ("<tr><td>[<a href=\"javascript:drop('" + item.id + "');void(drawTable())\">X</a>]</td><td>" + item.id + "</td><td>" + shortDate(item.created) + "</td>");
 
-        $("#table").append("<div title=\"" + shortDate(hist.upstream) + "\">" + dateDiff(item.created, hist.upstream) + "</div><div>" + dateDiff(hist.upstream, hist.committed) + "</div><div>" + shortDate(hist.committed) + "</div>");
-        $("#table").append("<div title=\"" + shortDate(hist.committed)  + "\">" + dateDiff(hist.committed, hist.test) + "</div><div>" + dateDiff(hist.test, hist.delivered) + "</div><div>" + dateDiff(hist.committed, hist.delivered)
-          + "</div><div>" + shortDate(hist.delivered) + "</div><div>" + shortDate(hist.deployed) + "</div></div>");
+        tabHtml += ("<td title=\"" + shortDate(hist.upstream) + "\">" + dateDiff(item.created, hist.upstream) + "</td><td>" + dateDiff(hist.upstream, hist.committed) + "</td><td>" + shortDate(hist.committed) + "</td>");
+        tabHtml += ("<td title=\"" + shortDate(hist.committed)  + "\">" + dateDiff(hist.committed, hist.test) + "</td><td>" + dateDiff(hist.test, hist.delivered) + "</td><td>" + dateDiff(hist.committed, hist.delivered)
+          + "</td><td>" + shortDate(hist.delivered) + "</td><td>" + shortDate(hist.deployed) + "</td></tr>");
       }
       else {
         log("Item dropped " + item.id)
       }
+
     }
+    $("#table").append(tabHtml + "</table>");
   }
 
   function validItem(item, hist) {
@@ -167,7 +169,7 @@
       h = item.history[j];
       if(h.to == "Discovery")
         hist.upstream = h.date;
-      if(h.to == "Ready for development" || h.from == "Ready for development")
+      if(!hist.committed && (h.to == "Ready for development" || h.from == "Ready for development" || h.type == "Sprint"))
         hist.committed = h.date;
       if(h.to == "SIT" || h.to == "UAT") {
         if(hist.test == null || Date.parse(hist.test) <= Date.parse(h.date))
@@ -239,7 +241,7 @@
   <div class="toolbar"><a href="javascript:void(view('input'));">Input</a>  <a href="javascript:void(view('table'));">Table</a> <a href="javascript:void(view('graph'));">Graph</a></div>
   <div id="log" onclick="$('#log').empty();">&nbsp;</div>
   <div id="input" style="background-color:#DDD">
-    <p>Enter JIRA JSON</p>
+    <p>Enter JIRA JSON (https://HOSTNAME/jira/rest/api/latest/issue/ISSUEKEY?expand=changelog)</p>
     <textarea id="in"></textarea>
     <input type="submit" onclick="processInput()" value="Process" />
 
