@@ -1,0 +1,131 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+<script src="simu.js"></script>
+<style>
+  body {
+    font-family: Courier;
+    background-color: #C6FFA3;
+  }
+
+  #simuout {
+    float: left;
+    margin-bottom: 2em;
+    font-size: 14px;
+    color: #999;
+    width: 100%;
+    background-color: #F6FAB4;
+    border: 1px solid grey;
+    box-shadow: 2px 2px 2px #888888;
+  }
+  #simuout div {
+    float: left;
+    width: 6em;
+  }
+
+
+  #simu .column {
+    float: left;
+    width: 16em;
+    height: 32em;
+    background-color: #EEE;
+    margin: 4px;
+    box-shadow: 2px 2px 2px #888888;
+  }
+  #simu .column .in {
+    float: left;
+    width: 40%;
+    height: 100%;
+  }
+  #simu .column .out {
+    float: left;
+    width: 40%;
+    background-color: #DDD;
+    max-height: 95%;
+    overflow: hidden;
+  }
+  #simu .column .info {
+    width: auto;
+  }
+  #simu .column .info .label {
+    font-weight: bold;
+  }
+  #simu .column .counter {
+    position: relative;
+    vertical-align: bottom;
+    top: 23em;
+    font-size: 20px;
+    color: #666;
+  }
+  #simu .bar {
+    width: 100%;
+    height: 4em;
+  }
+  #simu .postit {
+    float: left;
+    background-color: #F8F820;
+    font-family: Courier;
+    font-size:13px;
+    width: 3em;
+    height: 3em;
+    border: 1px solid grey;
+    margin: 4px;
+    box-shadow: 4px 4px 4px #888888;
+  }
+</style>
+
+<script type="text/javascript">
+
+
+
+  function shortDate(dt) {
+    if(dt && dt != "0") {
+      dt = new Date(Date.parse(dt));
+      return dt.getDate() + "." + (parseInt(dt.getMonth()) + 1) + "." + dt.getFullYear();
+    }
+    return "";
+  }
+
+  function dateDiff(dtA, dtB) {
+    //console.log(dtA + "-" + dtB);
+    dtA = new Date(Date.parse(dtA));
+    dtB = new Date(Date.parse(dtB));
+    if(!(dtB instanceof Date) || isNaN(dtB))
+      dtB = new Date();
+
+    var oneDay = 24*60*60*1000;
+
+    return Math.round(Math.abs((dtB.getTime() - dtA.getTime())/(oneDay)));
+  }
+
+</script>
+</head>
+
+<body>
+  <div id="simu">
+    <div class="bar"><a href="javascript:void(resetSimulation())">Reset</a>
+      <a href="javascript:void(startSimulation())">Start</a>
+      <a href="javascript:void(stopSimulation())">Stop</a> |
+      Set <a href="javascript:simu=simuMassive;void(setupSimulation());">XL</a>
+      <a href="javascript:simu=simuBig;void(setupSimulation());">L</a>
+      <a href="javascript:simu=simuMed;void(setupSimulation());">M</a>
+      <a href="javascript:simu=simuSmall;void(setupSimulation());">S</a>
+      <a href="javascript:simu=simuTiny;void(setupSimulation());">XS</a>
+      |
+      <span id="count">&nbsp;</span>
+    </div>
+    <div id="simuout">
+      <div>Navn</div><div>#Days</div><div>#Tasks</div><div>First</div>
+      <div>#Team</div><div>Util%</div><div>Eff%</div><div>Cost</div>
+    </div>
+    <div class="column" id="col1"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="counter">&nbsp;</div></div>
+    <div class="column" id="col2"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="counter">&nbsp;</div></div>
+    <div class="column" id="col3"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="counter">&nbsp;</div></div>
+    <div class="column" id="col4"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="counter">&nbsp;</div></div>
+  </div>
+
+  <script type="text/javascript">
+    setupSimulation();
+  </script>
+</body>
+</html>

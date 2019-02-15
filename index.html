@@ -35,12 +35,24 @@
     color: #999;
   }
 
+  #simuout {
+    margin-bottom: 2em;
+    font-size: 12px;
+    color: #999;
+    width: 100%;
+    background-color: #E7ED87;
+    border: 1px solid grey;
+    box-shadow: 2px 2px 2px #888888;
+  }
+
+
   #simu .column {
     float: left;
     width: 16em;
     height: 32em;
     background-color: #EEE;
     margin: 4px;
+    box-shadow: 2px 2px 2px #888888;
   }
   #simu .column .in {
     float: left;
@@ -50,7 +62,6 @@
   #simu .column .out {
     float: left;
     width: 40%;
-    height: 100%;
     background-color: #DDD;
   }
   #simu .column .info {
@@ -63,10 +74,13 @@
   #simu .postit {
     float: left;
     background-color: yellow;
+    font-family: Courier;
+    font-size:13px;
     width: 3em;
     height: 3em;
     border: 1px solid grey;
     margin: 4px;
+    box-shadow: 4px 4px 4px #888888;
   }
 </style>
 
@@ -314,8 +328,14 @@
   </div>
 
   <div id="simu">
-    <div class="bar"><div id="count">&nbsp;</div><a href="javascript:void(resetSimulation())">Reset</a> <a href="javascript:void(startSimulation())">Start</a> <a href="javascript:void(stopSimulation())">Stop</a>
+    <div class="bar"><div id="count">&nbsp;</div><a href="javascript:void(resetSimulation())">Reset</a>
+      <a href="javascript:void(startSimulation())">Start</a>
+      <a href="javascript:void(stopSimulation())">Stop</a> |
+      Set <a href="javascript:simu=simuBig;void(setupSimulation());">1.Big</a>
+      <a href="javascript:simu=simuMed;void(setupSimulation());">2.Med</a>
+      <a href="javascript:simu=simuSmall;void(setupSimulation());">3.Small</a>
     </div>
+    <div id="simuout">&nbsp</div>
     <div class="column" id="col1"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div></div>
     <div class="column" id="col2"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div></div>
     <div class="column" id="col3"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div></div>
