@@ -1,7 +1,7 @@
 <html>
 <head>
 <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
-
+<script src="simu.js"></script>
 <style>
   body {
     font-family: Courier;
@@ -26,11 +26,47 @@
     font-size: 13px;
   }
 
-
+  #out {
+    font-size: 11px;
+  }
   #log {
     margin-bottom: 2em;
     font-size: 11px;
     color: #999;
+  }
+
+  #simu .column {
+    float: left;
+    width: 16em;
+    height: 32em;
+    background-color: #EEE;
+    margin: 4px;
+  }
+  #simu .column .in {
+    float: left;
+    width: 40%;
+    height: 100%;
+  }
+  #simu .column .out {
+    float: left;
+    width: 40%;
+    height: 100%;
+    background-color: #DDD;
+  }
+  #simu .column .info {
+    width: auto;
+  }
+  #simu .bar {
+    width: 100%;
+    height: 4em;
+  }
+  #simu .postit {
+    float: left;
+    background-color: yellow;
+    width: 3em;
+    height: 3em;
+    border: 1px solid grey;
+    margin: 4px;
   }
 </style>
 
@@ -60,9 +96,16 @@
   }
 
   function processInput() {
-    json = JSON.parse($("#in").val());
+    json = null;
+    try {
+      json = JSON.parse($("#in").val());
+    }
+    catch(e) {
+      log(e);
+    }
+
     if(json) {
-      item = {'id': json.key, 'created': json.fields.created, 'history': [], 'drop': false};
+      item = {'id': json.key, 'created': json.fields.created, 'history': [], 'drop': false, 'type': json.fields.issuetype.name};
       //console.log(json.id);
       //console.log(json);
       for(i = 0; i < json.changelog.histories.length;i++) {
@@ -83,6 +126,13 @@
         return data.nodes[i];
     }
     return null;
+  }
+
+  function deleteItem(key) {
+    for(i = 0; i < data.nodes.length; i++) {
+      if(data.nodes[i].id == key)
+        data.nodes.splice(i, 1);
+    }
   }
 
   function setItem(item) {
@@ -106,6 +156,7 @@
   function addOrUpdateItem(item) {
     exItem = getItem(item.id);
     if(exItem) {
+      exItem['type'] = item.type;
       // Merge data
       //console.log("Old item found - merging")
       for(i = 0; i < item['history'].length; i++) {
@@ -124,16 +175,16 @@
     $("#out").empty();
     $("#out").append("<p>Data points (history points)</p>")
     $("#table").empty();
-    tabHtml = ("<table><tr><th>-</th><th>KEY</th><th>Created</th><th>Backlog</th><th>Upstream</th><th>Committed</th><th>In dev</th><th>In test</th><th>Lead time</th><th>Delivered</th><th>Deployed</th></tr>");
+    tabHtml = ("<table><tr><th>-</th><th>KEY</th><th>Type</th><th>Created</th><th>Backlog</th><th>Upstream</th><th>Committed</th><th>In dev</th><th>In test</th><th>Lead time</th><th>Delivered</th><th>Deployed</th></tr>");
     for(i = 0; i < data.nodes.length; i++) {
       item = data.nodes[i];
       hist = getHistoryPoints(item);
+      //console.log(hist);
 
-      $("#out").append("<p>" + item.id + " (" + item.history.length + ")</p>");
+      $("#out").append("" + item.id + " (" + item.history.length + ")<br/>");
 
       if(validItem(item, hist)) {
-        tabHtml += ("<tr><td>[<a href=\"javascript:drop('" + item.id + "');void(drawTable())\">X</a>]</td><td>" + item.id + "</td><td>" + shortDate(item.created) + "</td>");
-
+        tabHtml += ("<tr><td>[<a href=\"javascript:drop('" + item.id + "');void(drawTable())\">X</a>]</td><td>" + item.id + "</td><td>" + item.type + "</td><td>" + shortDate(item.created) + "</td>");
         tabHtml += ("<td title=\"" + shortDate(hist.upstream) + "\">" + dateDiff(item.created, hist.upstream) + "</td><td>" + dateDiff(hist.upstream, hist.committed) + "</td><td>" + shortDate(hist.committed) + "</td>");
         tabHtml += ("<td title=\"" + shortDate(hist.committed)  + "\">" + dateDiff(hist.committed, hist.test) + "</td><td>" + dateDiff(hist.test, hist.delivered) + "</td><td>" + dateDiff(hist.committed, hist.delivered)
           + "</td><td>" + shortDate(hist.delivered) + "</td><td>" + shortDate(hist.deployed) + "</td></tr>");
@@ -143,10 +194,13 @@
       }
 
     }
+    //console.log(tabHtml);
     $("#table").append(tabHtml + "</table>");
   }
 
   function validItem(item, hist) {
+    // Refactor this (crap)
+    //
     if('drop' in item && item.drop)
       return false;
     if(!hist.committed)
@@ -169,8 +223,11 @@
       h = item.history[j];
       if(h.to == "Discovery")
         hist.upstream = h.date;
-      if(!hist.committed && (h.to == "Ready for development" || h.from == "Ready for development" || h.type == "Sprint"))
+      if(!hist.committed && (h.to == "Ready for development" || h.from == "Ready for development" || h.type == "Sprint")) {
         hist.committed = h.date;
+        if(!hist.upstream)
+          hist.upstream = h.date;
+      }
       if(h.to == "SIT" || h.to == "UAT") {
         if(hist.test == null || Date.parse(hist.test) <= Date.parse(h.date))
           hist.test = h.date;
@@ -190,6 +247,7 @@
     $("#input").hide();
     $("#out").hide();
     $("#table").hide();
+    $("#simu").hide();
 
     if(v == "input") {
       $("#input").show();
@@ -197,6 +255,9 @@
     }
     if(v == "table") {
       $("#table").show();
+    }
+    if(v == "simu") {
+      $("#simu").show();
     }
   }
 
@@ -238,7 +299,7 @@
 </head>
 
 <body>
-  <div class="toolbar"><a href="javascript:void(view('input'));">Input</a>  <a href="javascript:void(view('table'));">Table</a> <a href="javascript:void(view('graph'));">Graph</a></div>
+  <div class="toolbar"><a href="javascript:void(view('input'));">Input</a>  <a href="javascript:void(view('table'));">Table</a> <a href="javascript:void(view('graph'));">Graph</a> <a href="javascript:void(view('simu'));">Simulator</a></div>
   <div id="log" onclick="$('#log').empty();">&nbsp;</div>
   <div id="input" style="background-color:#DDD">
     <p>Enter JIRA JSON (https://HOSTNAME/jira/rest/api/latest/issue/ISSUEKEY?expand=changelog)</p>
@@ -252,10 +313,20 @@
   <div id="table">&nbsp;
   </div>
 
+  <div id="simu">
+    <div class="bar"><div id="count">&nbsp;</div><a href="javascript:void(resetSimulation())">Reset</a> <a href="javascript:void(startSimulation())">Start</a> <a href="javascript:void(stopSimulation())">Stop</a>
+    </div>
+    <div class="column" id="col1"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div></div>
+    <div class="column" id="col2"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div></div>
+    <div class="column" id="col3"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div></div>
+    <div class="column" id="col4"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div></div>
+  </div>
+
   <script type="text/javascript">
     loadStorage();
     drawTable();
     view("input");
+    setupSimulation();
   </script>
 </body>
 </html>
