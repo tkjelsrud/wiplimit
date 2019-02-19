@@ -1,5 +1,5 @@
 simuBig = {
-  'name': 'l', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 40, 'columns': [
+  'name': 'l', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
     {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
     {'id': 'col2', 'name': 'Dev', 'cap': 6, 'lt': 12, 'tDays': 7, 'wip': 7, 'in': [], 'out': []},
     {'id': 'col3', 'name': 'Test', 'cap': 3, 'lt': 14, 'tDays': 7, 'wip': 7, 'in': [], 'out': []},
@@ -9,7 +9,7 @@ simuBig = {
 };
 
 simuMed = {
-  'name': 'm', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 40, 'columns': [
+  'name': 'm', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
     {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
     {'id': 'col2', 'name': 'Dev', 'cap': 4, 'lt': 12, 'tDays': 7, 'wip': 3, 'in': [], 'out': []},
     {'id': 'col3', 'name': 'Test', 'cap': 3, 'lt': 14, 'tDays': 7, 'wip': 3, 'in': [], 'out': []},
@@ -19,7 +19,7 @@ simuMed = {
 };
 
 simuSmall = {
-  'name': 'sm', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 40, 'columns': [
+  'name': 'sm', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
     {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
     {'id': 'col2', 'name': 'Dev', 'cap': 3, 'lt': 12, 'tDays': 7, 'wip': 2, 'in': [], 'out': []},
     {'id': 'col3', 'name': 'Test', 'cap': 2, 'lt': 14, 'tDays': 7, 'wip': 2, 'in': [], 'out': []},
@@ -29,7 +29,7 @@ simuSmall = {
 };
 
 simuMassive = {
-  'name': 'xl', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 40, 'columns': [
+  'name': 'xl', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
     {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
     {'id': 'col2', 'name': 'Dev', 'cap': 12, 'lt': 12, 'tDays': 7, 'wip': 12, 'in': [], 'out': []},
     {'id': 'col3', 'name': 'Test', 'cap': 12, 'lt': 14, 'tDays': 7, 'wip': 12, 'in': [], 'out': []},
@@ -39,10 +39,20 @@ simuMassive = {
 };
 
 simuTiny= {
-  'name': 'xs', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 40, 'columns': [
+  'name': 'xs', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
     {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
     {'id': 'col2', 'name': 'Dev', 'cap': 2, 'lt': 12, 'tDays': 7, 'wip': 1, 'in': [], 'out': []},
     {'id': 'col3', 'name': 'Test', 'cap': 1, 'lt': 14, 'tDays': 7, 'wip': 1, 'in': [], 'out': []},
+    {'id': 'col4', 'name': 'Done', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []}
+  ],
+  'refresh': {'tickMod': 15, 'size': 7, 'time': 200}
+};
+
+simuLargeWip= {
+  'name': 'lwip', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
+    {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
+    {'id': 'col2', 'name': 'Dev', 'cap': 6, 'lt': 12, 'tDays': 7, 'wip': 3, 'in': [], 'out': []},
+    {'id': 'col3', 'name': 'Test', 'cap': 3, 'lt': 14, 'tDays': 7, 'wip': 2, 'in': [], 'out': []},
     {'id': 'col4', 'name': 'Done', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []}
   ],
   'refresh': {'tickMod': 15, 'size': 7, 'time': 200}
@@ -69,6 +79,7 @@ function setupSimulation() {
     $('#' + simu.columns[i].id + ' .wip').html(simu.columns[i].wip);
     $('#' + simu.columns[i].id + ' .lt').html(simu.columns[i].lt);
     $('#' + simu.columns[i].id + ' .counter').html('0');
+    $('#' + simu.columns[i].id + ' .wait').html('0%');
   }
 }
 
@@ -163,11 +174,13 @@ function tickSimulation() {
       // Number of work days capacity to deliver this day
       wd = Math.min(Math.min(col.cap, col.in.length), col.wip);
       result.capacity += wd;
-      // Work factor, decreases as team size increases
+      // Work factor, decreases as team size increases, 0-1.0 where 1.0 = 100% efficient
       wf = (wd > 1 ? 1 / Math.log(wd + 1) : 1.0);
       //console.log(wd + ' ' + wf);
 
-      result.factor += wf;
+      visuShowWait(col, Math.round(100 * (1 - wf)));
+
+      result.factor += (wd * wf);
       for(j = 0; j < wd; j++) {
         tx = Math.floor(Math.random() * col.in.length);
         col.in[tx] -= wf;
@@ -246,6 +259,12 @@ function visuWorkNote(col, idx, val) {
 
 function visuShowCount(col, cnt) {
   $('#' + col.id + ' .counter').html(cnt);
+}
+
+function visuShowWait(col, wait) {
+  //wt = Math.round((result.factor / result.capacity) * 100);
+  $('#' + col.id + ' .wait').html(wait + '%');
+
 }
 
 function simLog(msg) {

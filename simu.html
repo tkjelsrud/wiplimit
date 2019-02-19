@@ -54,8 +54,16 @@
     position: relative;
     vertical-align: bottom;
     top: 23em;
-    font-size: 20px;
+    font-size: 18px;
     color: #666;
+  }
+  #simu .column .wait {
+    position: relative;
+    vertical-align: bottom;
+    top: 23em;
+    left: 1em;
+    font-size: 18px;
+    color: red;
   }
   #simu .bar {
     width: 100%;
@@ -111,6 +119,7 @@
       <a href="javascript:simu=simuMed;void(setupSimulation());">M</a>
       <a href="javascript:simu=simuSmall;void(setupSimulation());">S</a>
       <a href="javascript:simu=simuTiny;void(setupSimulation());">XS</a>
+      <a href="javascript:simu=simuLargeWip;void(setupSimulation());">LWIP</a>
       |
       <span id="count">&nbsp;</span>
     </div>
@@ -118,10 +127,10 @@
       <div>Navn</div><div>#Days</div><div>#Tasks</div><div>First</div>
       <div>#Team</div><div>Util%</div><div>Eff%</div><div>Cost</div>
     </div>
-    <div class="column" id="col1"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="counter">&nbsp;</div></div>
-    <div class="column" id="col2"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="counter">&nbsp;</div></div>
-    <div class="column" id="col3"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="counter">&nbsp;</div></div>
-    <div class="column" id="col4"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="counter">&nbsp;</div></div>
+    <div class="column" id="col1"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="wait">&nbsp;</div><div class="counter">&nbsp;</div></div>
+    <div class="column" id="col2"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="wait">&nbsp;</div><div class="counter">&nbsp;</div></div>
+    <div class="column" id="col3"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="wait">&nbsp;</div><div class="counter">&nbsp;</div></div>
+    <div class="column" id="col4"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="wait">&nbsp;</div><div class="counter">&nbsp;</div></div>
   </div>
 
   <script type="text/javascript">
