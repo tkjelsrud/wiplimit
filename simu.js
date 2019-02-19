@@ -73,7 +73,7 @@ $(window).keypress(function(e) {
 
 function setupSimulation() {
   for(i = 0; i < simu.columns.length; i++) {
-    $('#' + simu.columns[i].id + ' .info').html('<span class="label">&nbsp;</span> cap <span class="cap" contenteditable="true">&nbsp;</span> lt <span class="lt" contenteditable="true">&nbsp;</span> wip (<span class="wip" contenteditable="true">&nbsp;</span>)');
+    $('#' + simu.columns[i].id + ' .info').html('<span class="label">&nbsp;</span> ppl <span class="cap" contenteditable="true">&nbsp;</span> lt <span class="lt" contenteditable="true">&nbsp;</span> wip (<span class="wip" contenteditable="true">&nbsp;</span>)');
     $('#' + simu.columns[i].id + ' .label').html(simu.columns[i].name);
     $('#' + simu.columns[i].id + ' .cap').html(simu.columns[i].cap);
     $('#' + simu.columns[i].id + ' .wip').html(simu.columns[i].wip);
