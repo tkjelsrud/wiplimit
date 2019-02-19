@@ -62,6 +62,17 @@ simu = simuMassive;
 
 result = {'days': 0, 'tasks': 0, 'first': 0, 'team': 0, 'capacity': 0, 'utilization': 0, 'factor': 0, 'cost': 0};
 
+function Task(idx, size) {
+  this.id = idx;
+  this.type = 'task';
+  this.label = '';
+  this.log = new Array();
+  this.daysLeft = size;
+  this.addToLog = function(wf) {
+    this.log.push(wf);
+  };
+}
+
 $(window).keypress(function(e) {
     if (e.which === 32) {
         if(simu.status == 'run')
@@ -72,7 +83,10 @@ $(window).keypress(function(e) {
 });
 
 function setupSimulation() {
+  $('.columns').empty();
   for(i = 0; i < simu.columns.length; i++) {
+    $('.columns').append('<div class="column" id="' + simu.columns[i].id  + '"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="wait">&nbsp;</div><div class="counter">&nbsp;</div></div>');
+
     $('#' + simu.columns[i].id + ' .info').html('<span class="label">&nbsp;</span> ppl <span class="cap" contenteditable="true">&nbsp;</span> lt <span class="lt" contenteditable="true">&nbsp;</span> wip (<span class="wip" contenteditable="true">&nbsp;</span>)');
     $('#' + simu.columns[i].id + ' .label').html(simu.columns[i].name);
     $('#' + simu.columns[i].id + ' .cap').html(simu.columns[i].cap);
@@ -85,7 +99,9 @@ function setupSimulation() {
 
 function resetSimulation() {
   // Empty columns
+  simu.status = 'stop';
   simu.tick = 0;
+  simu['newId'] = 0;
 
   resetQueues();
   resetResult();
@@ -95,6 +111,9 @@ function resetSimulation() {
 
 function startSimulation() {
   // Read all simulation values
+  if(simu.status == 'stop') {
+    resetSimulation();
+  }
   simu.status = 'run';
   for(i = 0; i < simu.columns.length; i++) {
     simu.columns[i].wip = parseInt($('#' + simu.columns[i].id + ' .wip').html());
@@ -110,7 +129,6 @@ function pauseSimulation() {
 }
 
 function stopSimulation() {
-
   // Calc results
   result.days = simu.tick;
   result.tasks = lastColumn().out.length;
@@ -229,8 +247,12 @@ function isSimuDone() {
 
 function addPackages() {
   for(i = 0; i < simu.refresh.size; i++) {
-    simu.columns[0].in.push(simu.columns[0].lt);
-    visuNewNote(simu.columns[0]);
+    t = new Task(simu.newId++, simu.columns[0].lt);
+    if(i == 0) {
+      t.label = 'first';
+    }
+    simu.columns[0].in.push(t);
+    visuNewNote(t.id, simu.columns[0]);
   }
 }
 
@@ -238,9 +260,9 @@ function updateColumn(col) {
   //$('#' + col.id).html('in: ' + col.in.length + ' out:' + col.out.length);
 }
 
-function visuNewNote(col) {
+function visuNewNote(id, col) {
   // Visualize a new note'
-  $('#' + col.id + ' .in').append('<div class="postit">' + col.tDays + '</div>').fadeIn('slow');
+  $('#' + col.id + ' .in').append('<div id="t' + id + '" class="postit">' + col.tDays + '</div>').fadeIn('slow');
 }
 
 function visuBurnNote(col) {

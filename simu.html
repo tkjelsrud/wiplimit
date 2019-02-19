@@ -23,7 +23,6 @@
     width: 6em;
   }
 
-
   #simu .column {
     float: left;
     width: 16em;
@@ -84,8 +83,6 @@
 
 <script type="text/javascript">
 
-
-
   function shortDate(dt) {
     if(dt && dt != "0") {
       dt = new Date(Date.parse(dt));
@@ -95,7 +92,6 @@
   }
 
   function dateDiff(dtA, dtB) {
-    //console.log(dtA + "-" + dtB);
     dtA = new Date(Date.parse(dtA));
     dtB = new Date(Date.parse(dtB));
     if(!(dtB instanceof Date) || isNaN(dtB))
@@ -106,6 +102,12 @@
     return Math.round(Math.abs((dtB.getTime() - dtA.getTime())/(oneDay)));
   }
 
+  function toggleView(id) {
+    if($(id).is(":visible"))
+      $(id).hide();
+    else
+      $(id).show();
+  }
 </script>
 </head>
 
@@ -114,24 +116,37 @@
     <div class="bar"><a href="javascript:void(resetSimulation())">Reset</a>
       <a href="javascript:void(startSimulation())">Start</a>
       <a href="javascript:void(stopSimulation())">Stop</a> |
-      Set <a href="javascript:simu=simuMassive;void(setupSimulation());">XL</a>
+      Data set <span id="ds" style="font-style:italic">none selected</span> <select>...</select> |
+
+       <!--<a href="javascript:simu=simuMassive;void(setupSimulation());">XL</a>
       <a href="javascript:simu=simuBig;void(setupSimulation());">L</a>
       <a href="javascript:simu=simuMed;void(setupSimulation());">M</a>
       <a href="javascript:simu=simuSmall;void(setupSimulation());">S</a>
       <a href="javascript:simu=simuTiny;void(setupSimulation());">XS</a>
-      <a href="javascript:simu=simuLargeWip;void(setupSimulation());">LWIP</a>
-      |
+      <a href="javascript:simu=simuLargeWip;void(setupSimulation());">LWIP</a>-->
+      <a href="javascript:void(toggleView('#help'));">Help</a> |
       <span id="count">&nbsp;</span>
     </div>
-    <div style="color:#999;font-size:12px;font-style:italic;width:60em" onclick="$(this).hide();">Instructions. Select a data set, representing a team. The columns show number of team members (ppl), time to deliver a unit in column (lead time/lt) and work-in-progress limit (WIP). Start to run a simulation on 200 days. New items (7) are added to backlog every 15 day (configurable). Column darker area represents output waiting to be pulled (can indicate queuing). Column metric shows total tasks completed and red percentage is time lost in waiting (delays, dependencies, meetings, etc). Reset between runs.</div>
+    <div id="help" style="display:none;color:#999;font-size:12px;font-style:italic;width:60em;margin-bottom:3em">
+      <strong>Instructions</strong><p>Select a data set, representing a team. The columns show number of team members (ppl), time to deliver a unit in column (lead time/lt) and work-in-progress limit (WIP).</p><p>Start to run a simulation on 200 days. New items (7) are added to backlog every 15 day (configurable). Column darker area represents output waiting to be pulled (can indicate queuing). Column metric shows total tasks completed and red percentage is time lost in waiting (delays, dependencies, meetings, etc). Reset between runs.</p>
+    <p><strong>Space</strong> can be used to pause and unpause simulation during execution</p></div>
+    <!--div id="sets" style="display:none;color:#999;font-size:12px;font-style:italic;width:60em;margin-bottom:3em">
+      <table>
+        <tr><th>#</th><th>Description</th><th>Data</th></tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+    </div--!>
     <div id="simuout">
-      <div>Navn</div><div>#Days</div><div>#Tasks</div><div>First</div>
+      <div>Name</div><div>#Days</div><div>#Tasks</div><div>First</div>
       <div>#Team</div><div>Util%</div><div>Eff%</div><div>Cost</div>
     </div>
-    <div class="column" id="col1"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="wait">&nbsp;</div><div class="counter">&nbsp;</div></div>
-    <div class="column" id="col2"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="wait">&nbsp;</div><div class="counter">&nbsp;</div></div>
-    <div class="column" id="col3"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="wait">&nbsp;</div><div class="counter">&nbsp;</div></div>
-    <div class="column" id="col4"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="wait">&nbsp;</div><div class="counter">&nbsp;</div></div>
+    <div class="columns">
+      &nbsp;
+    </div>
   </div>
 
   <script type="text/javascript">
