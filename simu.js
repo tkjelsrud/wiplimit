@@ -1,65 +1,3 @@
-simuBig = {
-  'name': 'l', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
-    {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col2', 'name': 'Dev', 'cap': 6, 'lt': 12, 'tDays': 7, 'wip': 7, 'in': [], 'out': []},
-    {'id': 'col3', 'name': 'Test', 'cap': 3, 'lt': 14, 'tDays': 7, 'wip': 7, 'in': [], 'out': []},
-    {'id': 'col4', 'name': 'Done', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []}
-  ],
-  'refresh': {'tickMod': 15, 'size': 7, 'time': 200}
-};
-
-simuMed = {
-  'name': 'm', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
-    {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col2', 'name': 'Dev', 'cap': 4, 'lt': 12, 'tDays': 7, 'wip': 3, 'in': [], 'out': []},
-    {'id': 'col3', 'name': 'Test', 'cap': 3, 'lt': 14, 'tDays': 7, 'wip': 3, 'in': [], 'out': []},
-    {'id': 'col4', 'name': 'Done', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []}
-  ],
-  'refresh': {'tickMod': 15, 'size': 7, 'time': 200}
-};
-
-simuSmall = {
-  'name': 'sm', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
-    {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col2', 'name': 'Dev', 'cap': 3, 'lt': 12, 'tDays': 7, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col3', 'name': 'Test', 'cap': 2, 'lt': 14, 'tDays': 7, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col4', 'name': 'Done', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []}
-  ],
-  'refresh': {'tickMod': 15, 'size': 7, 'time': 200}
-};
-
-simuMassive = {
-  'name': 'xl', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
-    {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col2', 'name': 'Dev', 'cap': 12, 'lt': 12, 'tDays': 7, 'wip': 12, 'in': [], 'out': []},
-    {'id': 'col3', 'name': 'Test', 'cap': 12, 'lt': 14, 'tDays': 7, 'wip': 12, 'in': [], 'out': []},
-    {'id': 'col4', 'name': 'Done', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []}
-  ],
-  'refresh': {'tickMod': 15, 'size': 7, 'time': 200}
-};
-
-simuTiny= {
-  'name': 'xs', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
-    {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col2', 'name': 'Dev', 'cap': 2, 'lt': 12, 'tDays': 7, 'wip': 1, 'in': [], 'out': []},
-    {'id': 'col3', 'name': 'Test', 'cap': 1, 'lt': 14, 'tDays': 7, 'wip': 1, 'in': [], 'out': []},
-    {'id': 'col4', 'name': 'Done', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []}
-  ],
-  'refresh': {'tickMod': 15, 'size': 7, 'time': 200}
-};
-
-simuLargeWip= {
-  'name': 'lwip', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
-    {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col2', 'name': 'Dev', 'cap': 6, 'lt': 12, 'tDays': 7, 'wip': 3, 'in': [], 'out': []},
-    {'id': 'col3', 'name': 'Test', 'cap': 3, 'lt': 14, 'tDays': 7, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col4', 'name': 'Done', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []}
-  ],
-  'refresh': {'tickMod': 15, 'size': 7, 'time': 200}
-};
-
-simu = simuMassive;
-
 result = {'days': 0, 'tasks': 0, 'first': 0, 'team': 0, 'capacity': 0, 'utilization': 0, 'factor': 0, 'cost': 0};
 
 function Task(idx, size) {
@@ -84,16 +22,22 @@ $(window).keypress(function(e) {
 
 function setupSimulation() {
   $('.columns').empty();
-  for(i = 0; i < simu.columns.length; i++) {
-    $('.columns').append('<div class="column" id="' + simu.columns[i].id  + '"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="wait">&nbsp;</div><div class="counter">&nbsp;</div></div>');
+  for(i = 0; i < simu.workflow.length; i++) {
+    $('.columns').append('<div class="column" id="' + simu.workflow[i].id  + '"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="wait">&nbsp;</div><div class="counter">&nbsp;</div></div>');
 
-    $('#' + simu.columns[i].id + ' .info').html('<span class="label">&nbsp;</span> ppl <span class="cap" contenteditable="true">&nbsp;</span> lt <span class="lt" contenteditable="true">&nbsp;</span> wip (<span class="wip" contenteditable="true">&nbsp;</span>)');
-    $('#' + simu.columns[i].id + ' .label').html(simu.columns[i].name);
-    $('#' + simu.columns[i].id + ' .cap').html(simu.columns[i].cap);
-    $('#' + simu.columns[i].id + ' .wip').html(simu.columns[i].wip);
-    $('#' + simu.columns[i].id + ' .lt').html(simu.columns[i].lt);
-    $('#' + simu.columns[i].id + ' .counter').html('0');
-    $('#' + simu.columns[i].id + ' .wait').html('0%');
+    $('#' + simu.workflow[i].id + ' .info').html('<span class="label">&nbsp;</span> ppl <span class="cap" contenteditable="true">&nbsp;</span> lt <span class="lt" contenteditable="true">&nbsp;</span> wip (<span class="wip" contenteditable="true">&nbsp;</span>)');
+    $('#' + simu.workflow[i].id + ' .label').html(simu.workflow[i].name);
+    //$('#' + simu.workflow[i].id + ' .cap').html(simu.workflow[i].cap);
+    $('#' + simu.workflow[i].id + ' .wip').html(simu.workflow[i].wip);
+    lt = (simu.workflow[i].lt > 0 ? simu.workflow[i].lt : 0);
+    $('#' + simu.workflow[i].id + ' .lt').html(lt);
+    $('#' + simu.workflow[i].id + ' .counter').html('0');
+    $('#' + simu.workflow[i].id + ' .wait').html('0%');
+
+    tm = 0;
+    if(simu.team[simu.workflow[i].name] > 0)
+      tm = simu.team[simu.workflow[i].name];
+    $('#' + simu.workflow[i].id + ' .cap').html(tm);
   }
 }
 
@@ -115,10 +59,10 @@ function startSimulation() {
     resetSimulation();
   }
   simu.status = 'run';
-  for(i = 0; i < simu.columns.length; i++) {
-    simu.columns[i].wip = parseInt($('#' + simu.columns[i].id + ' .wip').html());
-    simu.columns[i].lt = parseInt($('#' + simu.columns[i].id + ' .lt').html());
-    simu.columns[i].cap = parseInt($('#' + simu.columns[i].id + ' .cap').html());
+  for(i = 0; i < simu.workflow.length; i++) {
+    simu.workflow[i].wip = parseInt($('#' + simu.workflow[i].id + ' .wip').html());
+    simu.workflow[i].lt = parseInt($('#' + simu.workflow[i].id + ' .lt').html());
+    simu.workflow[i].cap = parseInt($('#' + simu.workflow[i].id + ' .cap').html());
   }
 
   setTimeout(timer, simu.speed);
@@ -134,8 +78,8 @@ function stopSimulation() {
   result.tasks = lastColumn().out.length;
   result.team = 0;
 
-  for(i = 0; i < simu.columns.length; i++)
-    result.team += simu.columns[i].cap;
+  for(i = 0; i < simu.workflow.length; i++)
+    result.team += simu.workflow[i].cap;
 
   result.utilization = (result.capacity / (result.team * result.days)).toFixed(2);
   result.factor = (result.factor / (result.team * result.days)).toFixed(2);
@@ -167,30 +111,36 @@ function timer() {
 function tickSimulation() {
   if(simu.tick == simu.refresh.tickMod || simu.tick % simu.refresh.tickMod == 0) {
     // Time to refresh
-    addPackages();
+    addTasks();
   }
 
   // Calculate progress in column
-  for(i = simu.columns.length - 1; i >= 0; i--) {
-    col = simu.columns[i];
+  for(i = simu.workflow.length - 1; i >= 0; i--) {
+    col = simu.workflow[i];
+    //console.log("Selected " + col + " " + i);
     visuShowCount(col, col.in.length + col.out.length);
 
     if(col.out.length > 0) {
       // Pull - factor in hand-over time?
-      nextCol = (i + 1 <= simu.columns.length ? simu.columns[i + 1] : false);
+      nextCol = (i + 1 <= simu.workflow.length ? simu.workflow[i + 1] : false);
       if(nextCol && nextCol.in.length < nextCol.wip) {
-        t = col.out.pop();
-        nextCol.in.push(nextCol.lt + (nextCol.in.length / 10 * nextCol.lt)); // TAX? + (nextCol.tDays * (nextCol.in.length / 10)));
-        visuTransitionNote(col, nextCol);
+        t = col.out.shift();
+        t.daysLeft = nextCol.lt + (nextCol.in.length / 10 * nextCol.lt);
+        nextCol.in.push(t); // TAX? + (nextCol.tDays * (nextCol.in.length / 10)));
+        visuTransitionNote(t, col, nextCol);
       }
       if(!nextCol && !result.first) {
         result.first = simu.tick;
       }
     }
 
+    // TODO: refactor, we burn down based on total team, then within the columns
+    // TODO: Implemented the shared team (common)
+
     if(col.in.length > 0) {
       // Number of work days capacity to deliver this day
-      wd = Math.min(Math.min(col.cap, col.in.length), col.wip);
+      team = (simu.team[col.name] > 0 ? simu.team[col.name] : 0);
+      wd = Math.min(Math.min(team, col.in.length), col.wip);
       result.capacity += wd;
       // Work factor, decreases as team size increases, 0-1.0 where 1.0 = 100% efficient
       wf = (wd > 1 ? 1 / Math.log(wd + 1) : 1.0);
@@ -198,17 +148,22 @@ function tickSimulation() {
 
       visuShowWait(col, Math.round(100 * (1 - wf)));
 
+      //console.log(col.id + " " + team + " " + wd);
+
       result.factor += (wd * wf);
       for(j = 0; j < wd; j++) {
-        tx = Math.floor(Math.random() * col.in.length);
-        col.in[tx] -= wf;
-        visuWorkNote(col, tx, col.in[tx]);
+        tx = Math.floor(Math.random() * Math.min(col.in.length, col.wip));
+        t = col.in[tx];
+        t.daysLeft -= wf;
+        //console.log(JSON.stringify(t));
+
+        visuWorkNote(t); //, tx, col.in[tx]);
       }
       for(j = col.in.length - 1; j >= 0; j--) {
-        if(col.in[j] <= 0.0) {
-          col.in.splice(j, 1);
-          col.out.push(0);
-          visuBurnNote(col);
+        if(col.in[j].daysLeft <= 0.0) {
+          t = col.in.splice(j, 1);
+          col.out.push(t);
+          visuBurnNote(t, col);
         }
       }
     }
@@ -217,8 +172,15 @@ function tickSimulation() {
   simu.tick++;
 }
 
+/*function getCapacity(team, task) {
+  cap = 0;
+  for(t in team) {
+    cap += team[t];
+  }
+}*/
+
 function lastColumn() {
-  return simu.columns[simu.columns.length - 1];
+  return simu.workflow[simu.workflow.length - 1];
 }
 
 function resetResult() {
@@ -227,9 +189,9 @@ function resetResult() {
 }
 
 function resetQueues() {
-  for(i = 0; i < simu.columns.length; i++) {
-    simu.columns[i].in = new Array();
-    simu.columns[i].out = new Array();
+  for(i = 0; i < simu.workflow.length; i++) {
+    simu.workflow[i].in = new Array();
+    simu.workflow[i].out = new Array();
   }
 }
 
@@ -237,22 +199,23 @@ function isSimuDone() {
   if(simu.tick >= simu.refresh.time)
     return true;
   num = 0;
-  for(i = 0; i < simu.columns.length; i++) {
-    num += simu.columns[i].in.length;
-    if(i < simu.columns.length - 1)
-      num += simu.columns[i].out.length;
+  for(i = 0; i < simu.workflow.length; i++) {
+    num += simu.workflow[i].in.length;
+    if(i < simu.workflow.length - 1)
+      num += simu.workflow[i].out.length;
   }
   return (num == 0);
 }
 
-function addPackages() {
+function addTasks() {
   for(i = 0; i < simu.refresh.size; i++) {
-    t = new Task(simu.newId++, simu.columns[0].lt);
-    if(i == 0) {
+    t = new Task(simu.newId++, simu.workflow[0].lt);
+    if(i == 0)
       t.label = 'first';
-    }
-    simu.columns[0].in.push(t);
-    visuNewNote(t.id, simu.columns[0]);
+    if(i == simu.refresh.size -1)
+      t.label = 'last';
+    simu.workflow[0].out.push(t);
+    visuNewNote(t, simu.workflow[0], 'out');
   }
 }
 
@@ -260,23 +223,24 @@ function updateColumn(col) {
   //$('#' + col.id).html('in: ' + col.in.length + ' out:' + col.out.length);
 }
 
-function visuNewNote(id, col) {
+function visuNewNote(t, col, inout) {
   // Visualize a new note'
-  $('#' + col.id + ' .in').append('<div id="t' + id + '" class="postit">' + col.tDays + '</div>').fadeIn('slow');
+  $('#' + col.id + ' .' + inout).append('<div id="t' + t.id + '" class="postit ' + t.label + '">' + t.daysLeft + '</div>').fadeIn('slow');
 }
 
-function visuBurnNote(col) {
-  $($('#' + col.id + ' .in .postit')[0]).remove();
-  $('#' + col.id + ' .out').append('<div class="postit">' + col.tDays + '</div>').fadeIn('slow');
+function visuBurnNote(t, col) {
+  $($('#t' + t.id)[0]).remove();
+  visuNewNote(t, col, 'out');
 }
 
-function visuTransitionNote(colA, colB) {
-  $($('#' + colA.id + ' .out .postit')[0]).remove();
-  $('#' + colB.id + ' .in').append('<div class="postit">' + colB.tDays + '</div>').fadeIn('slow');
+function visuTransitionNote(t, colA, colB) {
+  $('#t' + t.id).remove();
+  visuNewNote(t, colB, 'in');
+  //$('#' + colB.id + ' .in').append('<div class="postit">' + colB.tDays + '</div>').fadeIn('slow');
 }
 
-function visuWorkNote(col, idx, val) {
-  $($('#' + col.id + ' .in .postit')[idx]).html(Math.round(val));
+function visuWorkNote(t) {
+  $('#t' + t.id).html(Math.round(t.daysLeft));
 }
 
 function visuShowCount(col, cnt) {

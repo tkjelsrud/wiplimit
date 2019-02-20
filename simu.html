@@ -1,6 +1,7 @@
 <html>
 <head>
 <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+<script src="data.js"></script>
 <script src="simu.js"></script>
 <style>
   body {
@@ -79,9 +80,31 @@
     margin: 4px;
     box-shadow: 4px 4px 4px #888888;
   }
+  .first {
+    background-color: #c4ff4d !important;
+  }
+  .last {
+    background-color: #ffc266 !important;
+  }
 </style>
 
 <script type="text/javascript">
+  simu = null;
+
+  function populateSelectData() {
+    for(set in simuSet) {
+      $('#datasets').append('<option value="' + set + '">' + simuSet[set].desc + '</option>');
+    }
+
+    setSimuData();
+  }
+
+  function setSimuData() {
+    sel = $('#datasets').val();
+    simu = simuSet[sel];
+
+    setupSimulation();
+  }
 
   function shortDate(dt) {
     if(dt && dt != "0") {
@@ -116,14 +139,7 @@
     <div class="bar"><a href="javascript:void(resetSimulation())">Reset</a>
       <a href="javascript:void(startSimulation())">Start</a>
       <a href="javascript:void(stopSimulation())">Stop</a> |
-      Data set <span id="ds" style="font-style:italic">none selected</span> <select>...</select> |
-
-       <!--<a href="javascript:simu=simuMassive;void(setupSimulation());">XL</a>
-      <a href="javascript:simu=simuBig;void(setupSimulation());">L</a>
-      <a href="javascript:simu=simuMed;void(setupSimulation());">M</a>
-      <a href="javascript:simu=simuSmall;void(setupSimulation());">S</a>
-      <a href="javascript:simu=simuTiny;void(setupSimulation());">XS</a>
-      <a href="javascript:simu=simuLargeWip;void(setupSimulation());">LWIP</a>-->
+      Data set <select id="datasets" onchange="setSimuData();">...</select> |
       <a href="javascript:void(toggleView('#help'));">Help</a> |
       <span id="count">&nbsp;</span>
     </div>
@@ -139,7 +155,7 @@
           <td></td>
         </tr>
       </table>
-    </div--!>
+    </div-->
     <div id="simuout">
       <div>Name</div><div>#Days</div><div>#Tasks</div><div>First</div>
       <div>#Team</div><div>Util%</div><div>Eff%</div><div>Cost</div>
@@ -150,7 +166,7 @@
   </div>
 
   <script type="text/javascript">
-    setupSimulation();
+    populateSelectData();
   </script>
 </body>
 </html>
