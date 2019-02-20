@@ -21,7 +21,8 @@
   }
   #simuout div {
     float: left;
-    width: 6em;
+    text-align: right;
+    width: 9em;
   }
 
   #simu .column {
@@ -80,11 +81,32 @@
     margin: 4px;
     box-shadow: 4px 4px 4px #888888;
   }
+  .out .postit {
+    opacity: 0.6;
+    /*border: 1px solid orange !important;*/
+  }
   .first {
     background-color: #c4ff4d !important;
   }
   .last {
     background-color: #ffc266 !important;
+  }
+
+  #graph {
+    margin-top: 2em;
+    margin-left: 2em;
+    float: left;
+    clear: both;
+    width: auto;
+    border: 1px solid grey;
+    background-color: #DDD;
+  }
+  #graph .bar {
+    position: absolute;
+    bottom: -300;
+    width: 0.2em;
+    background-color: blue;
+    border: 1px solid grey;
   }
 </style>
 
@@ -140,8 +162,12 @@
       <a href="javascript:void(startSimulation())">Start</a>
       <a href="javascript:void(stopSimulation())">Stop</a> |
       Data set <select id="datasets" onchange="setSimuData();">...</select> |
+      <a href="javascript:void(toggleView('#config'));">Configure</a> |
       <a href="javascript:void(toggleView('#help'));">Help</a> |
       <span id="count">&nbsp;</span>
+    </div>
+    <div id="config" style="display:none">
+        ...
     </div>
     <div id="help" style="display:none;color:#999;font-size:12px;font-style:italic;width:60em;margin-bottom:3em">
       <strong>Instructions</strong><p>Select a data set, representing a team. The columns show number of team members (ppl), time to deliver a unit in column (lead time/lt) and work-in-progress limit (WIP).</p><p>Start to run a simulation on 200 days. New items (7) are added to backlog every 15 day (configurable). Column darker area represents output waiting to be pulled (can indicate queuing). Column metric shows total tasks completed and red percentage is time lost in waiting (delays, dependencies, meetings, etc). Reset between runs.</p>
@@ -163,6 +189,7 @@
     <div class="columns">
       &nbsp;
     </div>
+    <div id="graph">&nbsp;</div>
   </div>
 
   <script type="text/javascript">

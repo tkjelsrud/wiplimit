@@ -6,9 +6,17 @@ function Task(idx, size) {
   this.label = '';
   this.log = new Array();
   this.daysLeft = size;
+  this.startDay = 0;
+  this.colDone = {};
   this.addToLog = function(wf) {
     this.log.push(wf);
   };
+  this.getStatus = function() {
+    cx = "";
+    for(c in this.colDone)
+      cx += c + ":" + this.colDone[c];
+    return "id:" + this.id + " start:" + this.startDay + " " + cx;
+  }
 }
 
 $(window).keypress(function(e) {
@@ -83,12 +91,14 @@ function stopSimulation() {
 
   result.utilization = (result.capacity / (result.team * result.days)).toFixed(2);
   result.factor = (result.factor / (result.team * result.days)).toFixed(2);
-  result.cost = (simu.cost * result.days * result.team).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  result.cost = (simu.costDay * result.days * result.team).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   color = (isSimuDone() ? '#999' : 'red');
 
-  simLog('<div style="clear:both">' + simu.name + '</div><div style="color:' + color + '"">' + result.days + "</div><div>" + result.tasks +
+  simLog('<div style="clear:both">' + simu.desc + '</div><div style="color:' + color + '"">' + result.days + "</div><div>" + result.tasks +
          "</div><div>" + result.first + "</div><div>" + result.team + "</div><div>" + result.utilization + "</div><div>" +
          result.factor + "</div><div>" + result.cost + "</div>");
+
+  renderGraph();
 
   resetResult();
   resetQueues();
@@ -125,7 +135,18 @@ function tickSimulation() {
       nextCol = (i + 1 <= simu.workflow.length ? simu.workflow[i + 1] : false);
       if(nextCol && nextCol.in.length < nextCol.wip) {
         t = col.out.shift();
-        t.daysLeft = nextCol.lt + (nextCol.in.length / 10 * nextCol.lt);
+        if(Array.isArray(t)) console.log("A array");
+        //console.log("out" + JSON.stringify(t));
+        t.daysLeft = nextCol.lt;// + (nextCol.in.length / 10 * nextCol.lt);
+
+        if(simu.workFactor.taskVariation != 1) {
+          modifier = Math.floor(Math.random() * t.daysLeft * simu.workFactor.taskVariation) - (t.daysLeft / 2 * simu.workFactor.taskVariation);
+          //console.log(t.daysLeft + " " + modifier);
+          t.daysLeft += modifier;
+        }
+
+        t.moveDay = simu.tick;
+        t.colDone[col.name] = simu.tick;
         nextCol.in.push(t); // TAX? + (nextCol.tDays * (nextCol.in.length / 10)));
         visuTransitionNote(t, col, nextCol);
       }
@@ -143,7 +164,9 @@ function tickSimulation() {
       wd = Math.min(Math.min(team, col.in.length), col.wip);
       result.capacity += wd;
       // Work factor, decreases as team size increases, 0-1.0 where 1.0 = 100% efficient
-      wf = (wd > 1 ? 1 / Math.log(wd + 1) : 1.0);
+      wf = 1.0;
+      if(simu.workFactor.sizeTax == 'loga')
+        wf = (wd > 1 ? 1 / Math.log(wd + 1) : 1.0);
       //console.log(wd + ' ' + wf);
 
       visuShowWait(col, Math.round(100 * (1 - wf)));
@@ -154,6 +177,7 @@ function tickSimulation() {
       for(j = 0; j < wd; j++) {
         tx = Math.floor(Math.random() * Math.min(col.in.length, col.wip));
         t = col.in[tx];
+        //if(Array.isArray(t)) console.log("B array");
         t.daysLeft -= wf;
         //console.log(JSON.stringify(t));
 
@@ -161,7 +185,7 @@ function tickSimulation() {
       }
       for(j = col.in.length - 1; j >= 0; j--) {
         if(col.in[j].daysLeft <= 0.0) {
-          t = col.in.splice(j, 1);
+          t = col.in.splice(j, 1)[0];
           col.out.push(t);
           visuBurnNote(t, col);
         }
@@ -210,6 +234,7 @@ function isSimuDone() {
 function addTasks() {
   for(i = 0; i < simu.refresh.size; i++) {
     t = new Task(simu.newId++, simu.workflow[0].lt);
+    t.startDay = simu.tick;
     if(i == 0)
       t.label = 'first';
     if(i == simu.refresh.size -1)
@@ -223,9 +248,17 @@ function updateColumn(col) {
   //$('#' + col.id).html('in: ' + col.in.length + ' out:' + col.out.length);
 }
 
+/*function propsToString(props) {
+  st = "";
+  for(p in props)
+    if(!(typeof props[p] === "function"))
+      st += p + ":" + props[p] + "\n";
+  return st;
+}*/
+
 function visuNewNote(t, col, inout) {
   // Visualize a new note'
-  $('#' + col.id + ' .' + inout).append('<div id="t' + t.id + '" class="postit ' + t.label + '">' + t.daysLeft + '</div>').fadeIn('slow');
+  $('#' + col.id + ' .' + inout).append('<div id="t' + t.id + '" class="postit ' + t.label + '" title="' + t.getStatus() + '">' + Math.floor(t.daysLeft) + '</div>').fadeIn('slow');
 }
 
 function visuBurnNote(t, col) {
@@ -255,4 +288,36 @@ function visuShowWait(col, wait) {
 
 function simLog(msg) {
   $('#simuout').append(msg);
+}
+
+function renderGraph() {
+  // Plot all finished tasks on timeline
+  // sort the entries by first done (que actual sorting)
+  // create a bar with height of total time in transit
+  $('#graph').empty();
+
+  arr = new Array();
+
+  for(i = 0; i < lastColumn().out.length; i++) {
+    t = lastColumn().out[i];
+    start = 999;
+    end = 0;
+    for(c in t.colDone) {
+      if(t.colDone[c] < start)
+        start = t.colDone[c];
+      if(t.colDone[c] > end)
+        end = t.colDone[c];
+    }
+    arr.push(end - start);
+  }
+  arr.sort(sortNumber);
+
+  for(i = 0; i < arr.length; i++) {
+    $('#graph').append('<div class="bar" style="left:' + (i*6) + 'px;height:' + arr[i] + 'px" />');
+  }
+
+}
+
+function sortNumber(a,b) {
+  return a - b;
 }
