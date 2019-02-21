@@ -1,6 +1,6 @@
 result = {'days': 0, 'tasks': 0, 'first': 0, 'team': 0, 'capacity': 0, 'utilization': 0, 'factor': 0, 'cost': 0};
 graph = null;
-graphSetColor = ["#FE938C" ,"#9CAFB7", "#D6DBB2", "#E24E1B", "#DB995A", "#A5CBC3", "#85CB33", "#100B00"];
+graphSetColor = ["#FE938C" ,"#9CAFB7", "#D6DBB2", "#E24E1B", "#DB995A",  "#A5CBC3", "#ff6666", "#85CB33", "#100B00"];
 
 function Task(idx, size) {
   this.id = idx;
@@ -17,7 +17,10 @@ function Task(idx, size) {
     cx = "";
     for(c in this.colDone)
       cx += c + ":" + this.colDone[c];
-    return "id:" + this.id + " start:" + this.startDay + " " + cx;
+    log = "";
+    for(l in this.log)
+      log += " " + l;
+    return "id:" + this.id + " start:" + this.startDay + " " + cx + " LOG " + log;
   }
 }
 
@@ -132,33 +135,46 @@ function tickSimulation() {
     //console.log("Selected " + col + " " + i);
     visuShowCount(col, col.in.length + col.out.length);
 
-    if(col.out.length > 0) {
-      // Pull - factor in hand-over time?
-      nextCol = (i + 1 <= simu.workflow.length ? simu.workflow[i + 1] : false);
-      if(nextCol && nextCol.in.length < nextCol.wip) {
-        t = col.out.shift();
-        if(Array.isArray(t)) console.log("A array");
-        //console.log("out" + JSON.stringify(t));
-        t.daysLeft = nextCol.lt;// + (nextCol.in.length / 10 * nextCol.lt);
+    nextCol = (i + 1 <= simu.workflow.length ? simu.workflow[i + 1] : false);
+    moveLimit = 999; // No limit to number of tasks we transition in one tick
 
-        if(simu.workFactor.taskVariation != 1) {
-          modifier = Math.floor(Math.random() * t.daysLeft * simu.workFactor.taskVariation) - (t.daysLeft / 2 * simu.workFactor.taskVariation);
-          //console.log(t.daysLeft + " " + modifier);
-          t.daysLeft += modifier;
-        }
+    while(moveLimit-- > 0 && col.out.length > 0 && nextCol && nextCol.in.length < nextCol.wip) {
+      t = col.out.shift();
+      if(Array.isArray(t)) console.log("A array");
+      //console.log("out" + JSON.stringify(t));
+      t.daysLeft = nextCol.lt;// + (nextCol.in.length / 10 * nextCol.lt);
 
-        t.moveDay = simu.tick;
-        t.colDone[col.name] = simu.tick;
-        nextCol.in.push(t); // TAX? + (nextCol.tDays * (nextCol.in.length / 10)));
-        visuTransitionNote(t, col, nextCol);
+      if(simu.workFactor.taskVariation != 1) {
+        modifier = Math.floor(Math.random() * t.daysLeft * simu.workFactor.taskVariation) - (t.daysLeft / 2 * simu.workFactor.taskVariation);
+        //console.log(t.daysLeft + " " + modifier);
+        t.daysLeft += modifier;
       }
-      if(!nextCol && !result.first) {
-        result.first = simu.tick;
+
+      t.addToLog(col.name + " workload " + t.daysLeft);
+
+      t.moveDay = simu.tick;
+      t.colDone[col.name] = simu.tick;
+
+      // TODO transition action
+      if(simu.transition.action && simu.transition.action == "split") {
+        // Find way to split task, assign a sub ID, a random common color?
+        // Ensure not to infinitely split tasks (next tick)
+        //
       }
+      if(simu.transition.action && simu.transition.action == "merge") {
+        // Find way to collect all with same family of ID and only when *all complete* merge into a new task, then transition
+      }
+
+      nextCol.in.push(t); // TAX? + (nextCol.tDays * (nextCol.in.length / 10)));
+      visuTransitionNote(t, col, nextCol);
+    }
+    if(!nextCol && !result.first) {
+      result.first = simu.tick;
     }
 
     // TODO: refactor, we burn down based on total team, then within the columns
     // TODO: Implemented the shared team (common)
+    // TODO: Add possibility to block and unblock
 
     if(col.in.length > 0) {
       // Number of work days capacity to deliver this day
