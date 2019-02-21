@@ -13,12 +13,16 @@ simuDefault = {
 simuSet = {};
 simuSet['large'] = $.extend(true, {}, simuDefault);
 simuSet.large.desc = 'Large team with no WIP limit';
-simuSet.large.workFactor.taskVariation = 2;
 simuSet.large.team = {'Dev': 6, 'Test': 3, 'Common': 0};
+
+simuSet['largewip'] = $.extend(true, {}, simuDefault);
+simuSet.largewip.desc = 'Large team WIPed';
+simuSet.largewip.workflow[1].wip = 3;
+simuSet.largewip.workflow[2].wip = 3;
+simuSet.largewip.team = {'Dev': 6, 'Test': 3, 'Common': 0};
 
 simuSet['medium'] = $.extend(true, {}, simuDefault);
 simuSet.medium.desc = 'Medium team with some WIP';
-simuSet.medium.workFactor.taskVariation = 2;
 simuSet.medium.team = {'Dev': 4, 'Test': 3, 'Common': 0};
 simuSet.medium.workflow[1].wip = 3; //Dev
 simuSet.medium.workflow[2].wip = 3; //Test
@@ -40,6 +44,26 @@ simuSet.singlewip.workflow = [
   {'id': 'col2', 'name': 'Dev', 'lt': 12, 'wip': 1, 'in': [], 'out': []},
   {'id': 'col3', 'name': 'Done', 'wip': 9, 'in': [], 'out': []}];
 simuSet.singlewip.team = {'Dev': 1};
+
+simuSet['rand'] = $.extend(true, {}, simuDefault);
+simuSet.rand.desc = '2 team, Random size tasks, no wip';
+simuSet.rand.workFactor.taskVariation = 4;
+simuSet.rand.workFactor.sizeTax = 'flat';
+simuSet.rand.workflow = [
+  {'id': 'col1', 'name': 'To do', 'wip': 9, 'in': [], 'out': []},
+  {'id': 'col2', 'name': 'Dev', 'lt': 12, 'wip': 9, 'in': [], 'out': []},
+  {'id': 'col3', 'name': 'Done', 'wip': 9, 'in': [], 'out': []}];
+simuSet.rand.team = {'Dev': 2};
+
+simuSet['randwip'] = $.extend(true, {}, simuDefault);
+simuSet.randwip.desc = '2 team, Random size tasks WIPed';
+simuSet.randwip.workFactor.taskVariation = 4;
+simuSet.randwip.workFactor.sizeTax = 'flat';
+simuSet.randwip.workflow = [
+  {'id': 'col1', 'name': 'To do', 'wip': 9, 'in': [], 'out': []},
+  {'id': 'col2', 'name': 'Dev', 'lt': 12, 'wip': 2, 'in': [], 'out': []},
+  {'id': 'col3', 'name': 'Done', 'wip': 9, 'in': [], 'out': []}];
+simuSet.randwip.team = {'Dev': 2};
 
 /*
 simuSmall = {

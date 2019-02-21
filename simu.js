@@ -1,4 +1,6 @@
 result = {'days': 0, 'tasks': 0, 'first': 0, 'team': 0, 'capacity': 0, 'utilization': 0, 'factor': 0, 'cost': 0};
+graph = null;
+graphSetColor = ["#FE938C" ,"#9CAFB7", "#D6DBB2", "#E24E1B", "#DB995A", "#A5CBC3", "#85CB33", "#100B00"];
 
 function Task(idx, size) {
   this.id = idx;
@@ -291,11 +293,6 @@ function simLog(msg) {
 }
 
 function renderGraph() {
-  // Plot all finished tasks on timeline
-  // sort the entries by first done (que actual sorting)
-  // create a bar with height of total time in transit
-  $('#graph').empty();
-
   arr = new Array();
 
   for(i = 0; i < lastColumn().out.length; i++) {
@@ -312,10 +309,54 @@ function renderGraph() {
   }
   arr.sort(sortNumber);
 
-  for(i = 0; i < arr.length; i++) {
-    $('#graph').append('<div class="bar" style="left:' + (i*6) + 'px;height:' + arr[i] + 'px" />');
-  }
+  data = new Array();
+  min = arr[0];
+  max = arr[arr.length - 1];
+  div = Math.floor((max - min) / 10.0);
 
+  for(i = 0; i < 10; i++) {
+    mi = min + (div * i);
+    ma = min + (div * i) + div;
+    cn = 0;
+    for(j = 0; j < arr.length; j++) {
+      if(arr[j] >= mi && arr[j] <= ma)
+        cn += 1;
+    }
+    data.push({x: mi, y: cn});
+ }
+
+ //graphcanvas
+ $("#graph").show();
+ var ctx = document.getElementById("graphcanvas").getContext('2d');
+ if(graph == null) {
+   graph = new Chart(ctx, {
+      type: 'bubble',
+      data: {
+          datasets: [{
+              label: simu.desc,
+              data: data,
+              backgroundColor: graphSetColor.pop()
+          }]
+      },
+      options: {
+          scales: {
+              xAxes: [{
+                  type: 'linear',
+                  position: 'bottom'
+              }]
+          }
+      }
+  });
+}
+else {
+  // Update graphed
+  graph.data.datasets.push({label: simu.desc, data: data, backgroundColor: graphSetColor.pop()});
+  graph.update();
+}
+
+  //for(i = 0; i < group.length; i++) {
+  //  $('#graph').append('<div class="bar" style="left:' + (i * 4) + 'px;height:' + (group[i] * 2) + 'px" />');
+  //}
 }
 
 function sortNumber(a,b) {
