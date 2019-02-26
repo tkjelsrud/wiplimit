@@ -1,9 +1,9 @@
 simuDefault = {
   'tick': 0, 'status': 'stop', 'costDay': 10000, 'speed': 50, 'workflow': [
-    {'id': 'col1', 'name': 'To do', 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col2', 'name': 'Dev', 'lt': 12, 'wip': 7, 'in': [], 'out': []},
-    {'id': 'col3', 'name': 'Test', 'lt': 14, 'wip': 7, 'in': [], 'out': []},
-    {'id': 'col4', 'name': 'Done', 'wip': 2, 'in': [], 'out': []}
+    {'id': 'col1', 'name': 'To do', 'wip': 0, 'in': [], 'out': []},
+    {'id': 'col2', 'name': 'Dev', 'lt': 12, 'wip': 0, 'in': [], 'out': []},
+    {'id': 'col3', 'name': 'Test', 'lt': 14, 'wip': 0, 'in': [], 'out': []},
+    {'id': 'col4', 'name': 'Done', 'wip': 0, 'in': [], 'out': []}
   ],
   'team': {'To do': 0, 'Done': 0, 'Dev': 2, 'Test': 1, 'Common': 2},
   'workFactor': {'sizeTax': 'loga', 'blockChance': 0.0, 'unblockChance': 0.0, 'taskVariation': 1},
@@ -23,13 +23,13 @@ simuSet.largewip.workflow[2].wip = 3;
 simuSet.largewip.team = {'Dev': 6, 'Test': 3, 'Common': 0};
 
 simuSet['medium'] = $.extend(true, {}, simuDefault);
-simuSet.medium.desc = 'A3. Medium team with some WIP';
+simuSet.medium.desc = 'A3. Medium team WIPed';
 simuSet.medium.team = {'Dev': 4, 'Test': 3, 'Common': 0};
 simuSet.medium.workflow[1].wip = 3; //Dev
 simuSet.medium.workflow[2].wip = 3; //Test
 
 simuSet['small'] = $.extend(true, {}, simuDefault);
-simuSet.small.desc = 'A4. Small team with some WIP';
+simuSet.small.desc = 'A4. Small team WIPed';
 simuSet.small.team = {'Dev': 2, 'Test': 1, 'Common': 0};
 simuSet.small.workflow[1].wip = 2; //Dev
 simuSet.small.workflow[2].wip = 1; //Test
@@ -73,6 +73,17 @@ simuSet.randwip.workflow = [
   {'id': 'col2', 'name': 'Dev', 'lt': 12, 'wip': 2, 'in': [], 'out': []},
   {'id': 'col3', 'name': 'Done', 'wip': 9, 'in': [], 'out': []}];
 simuSet.randwip.team = {'Dev': 2};
+
+/*simuSet['bieber'] = $.extend(true, {}, simuDefault);
+simuSet.bieber.desc = 'XX. 1000 teenagers at Bieber concert';
+simuSet.bieber.workFactor.taskVariation = 4;
+simuSet.bieber.workFactor.sizeTax = 'flat';
+simuSet.bieber.workflow = [
+  {'id': 'col1', 'name': 'To do', 'wip': 9, 'in': [], 'out': []},
+  {'id': 'col2', 'name': 'Dev', 'lt': 2, 'wip': 2, 'in': [], 'out': []},
+  {'id': 'col3', 'name': 'Done', 'wip': 9, 'in': [], 'out': []}];
+simuSet.bieber.team = {'Dev': 2};
+simuSet.bieber.refresh = {'tickMod': 999, 'size': 1000, 'time': 200};*/
 
 /*
 simuSmall = {

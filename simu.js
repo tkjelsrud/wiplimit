@@ -1,4 +1,4 @@
-result = {'days': 0, 'tasks': 0, 'first': 0, 'team': 0, 'capacity': 0, 'utilization': 0, 'factor': 0, 'cost': 0};
+result = {'days': 0, 'tasks': 0, 'first': 0, 'team': 0, 'capacity': 0, 'utilization': 0, 'factor': 0, 'cost': 0, 'dayInProgress': []};
 graph = null;
 graphSetColor = ["#FE938C" ,"#9CAFB7", "#D6DBB2", "#E24E1B", "#DB995A",  "#A5CBC3", "#ff6666", "#85CB33", "#100B00"];
 
@@ -9,18 +9,14 @@ function Task(idx, size) {
   this.log = new Array();
   this.daysLeft = size;
   this.startDay = 0;
-  this.colDone = {};
+  this.colDone = new Array();
   this.addToLog = function(wf) {
     this.log.push(wf);
   };
   this.getStatus = function() {
     cx = "";
-    for(c in this.colDone)
-      cx += c + ":" + this.colDone[c];
-    log = "";
-    for(l in this.log)
-      log += " " + l;
-    return "id:" + this.id + " start:" + this.startDay + " " + cx + " LOG " + log;
+    last = this.colDone[this.colDone.length - 1];
+    return "id:" + this.id + " begin:" + this.startDay + " leadtime:" + (last - this.startDay);
   }
 }
 
@@ -35,22 +31,39 @@ $(window).keypress(function(e) {
 
 function setupSimulation() {
   $('.columns').empty();
+
+  // Show team setup
+  $('#team').html('<img src="http://webxity.com/wp-content/uploads/2015/08/bootwise-icon-02.png" style="width:30px;vertical-align:middle;margin-right:4px" /><strong>Team</strong>&nbsp;&nbsp;&nbsp;');
+  for(i in simu.team) {
+    if(simu.team[i] > 0)
+      $('#team').append('<span>' + i + ' ' + simu.team[i] + '</span>&nbsp;&nbsp;');
+  }
+
   for(i = 0; i < simu.workflow.length; i++) {
     $('.columns').append('<div class="column" id="' + simu.workflow[i].id  + '"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="wait">&nbsp;</div><div class="counter">&nbsp;</div></div>');
 
-    $('#' + simu.workflow[i].id + ' .info').html('<span class="label">&nbsp;</span> ppl <span class="cap" contenteditable="true">&nbsp;</span> lt <span class="lt" contenteditable="true">&nbsp;</span> wip (<span class="wip" contenteditable="true">&nbsp;</span>)');
-    $('#' + simu.workflow[i].id + ' .label').html(simu.workflow[i].name);
+    if(simu.workflow[i].wip && simu.workflow[i].wip > 0) {
+      $('#' + simu.workflow[i].id + ' .info').html('<strong>' + simu.workflow[i].name + '</strong> (<span class="wip" contenteditable="true">' + simu.workflow[i].wip + '</span>)');
+    }
+    else {
+      simu.workflow[i].wip = 15;
+      $('#' + simu.workflow[i].id + ' .info').html('<strong>' + simu.workflow[i].name + '</strong> <span class="wip" contenteditable="true">&nbsp;</span>');
+    }
+    //$('#' + simu.workflow[i].id + ' .info').html('<span class="label">&nbsp;</span> ppl <span class="cap" contenteditable="true">&nbsp;</span> lt <span class="lt" contenteditable="true">&nbsp;</span> wip (<span class="wip" contenteditable="true">&nbsp;</span>)');
+    //$('#' + simu.workflow[i].id + ' .label').html(simu.workflow[i].name);
     //$('#' + simu.workflow[i].id + ' .cap').html(simu.workflow[i].cap);
-    $('#' + simu.workflow[i].id + ' .wip').html(simu.workflow[i].wip);
-    lt = (simu.workflow[i].lt > 0 ? simu.workflow[i].lt : 0);
-    $('#' + simu.workflow[i].id + ' .lt').html(lt);
+    //$('#' + simu.workflow[i].id + ' .wip').html(simu.workflow[i].wip);
+    //lt = (simu.workflow[i].lt > 0 ? simu.workflow[i].lt : 0);
+    if(!(simu.workflow[i].lt > 0))
+      simu.workflow[i].lt = 0;
+    //$('#' + simu.workflow[i].id + ' .lt').html(lt);
     $('#' + simu.workflow[i].id + ' .counter').html('0');
     $('#' + simu.workflow[i].id + ' .wait').html('0%');
 
-    tm = 0;
-    if(simu.team[simu.workflow[i].name] > 0)
-      tm = simu.team[simu.workflow[i].name];
-    $('#' + simu.workflow[i].id + ' .cap').html(tm);
+    //tm = 0;
+    //if(simu.team[simu.workflow[i].name] > 0)
+    //  tm = simu.team[simu.workflow[i].name];
+    //$('#' + simu.workflow[i].id + ' .cap').html(tm);
   }
 }
 
@@ -72,11 +85,13 @@ function startSimulation() {
     resetSimulation();
   }
   simu.status = 'run';
-  for(i = 0; i < simu.workflow.length; i++) {
+
+  // TODO: see how we pick up values from gui (currently disabled)
+  /*for(i = 0; i < simu.workflow.length; i++) {
     simu.workflow[i].wip = parseInt($('#' + simu.workflow[i].id + ' .wip').html());
     simu.workflow[i].lt = parseInt($('#' + simu.workflow[i].id + ' .lt').html());
     simu.workflow[i].cap = parseInt($('#' + simu.workflow[i].id + ' .cap').html());
-  }
+  }*/
 
   setTimeout(timer, simu.speed);
 }
@@ -91,8 +106,8 @@ function stopSimulation() {
   result.tasks = lastColumn().out.length;
   result.team = 0;
 
-  for(i = 0; i < simu.workflow.length; i++)
-    result.team += simu.workflow[i].cap;
+  for(i in simu.team)
+    result.team += simu.team[i];
 
   result.utilization = (result.capacity / (result.team * result.days)).toFixed(2);
   result.factor = (result.factor / (result.team * result.days)).toFixed(2);
@@ -100,8 +115,9 @@ function stopSimulation() {
   color = (isSimuDone() ? '#999' : 'red');
 
   simLog('<div style="clear:both">' + simu.desc + '</div><div style="color:' + color + '"">' + result.days + "</div><div>" + result.tasks +
-         "</div><div>" + result.first + "</div><div>" + result.team + "</div><div>" + result.utilization + "</div><div>" +
+         "</div><div>" + result.team + "</div><div>" + result.utilization + "</div><div>" +
          result.factor + "</div><div>" + result.cost + "</div>");
+  //<div>" + result.first + "</div>
 
   renderGraph();
 
@@ -135,7 +151,7 @@ function tickSimulation() {
     //console.log("Selected " + col + " " + i);
     visuShowCount(col, col.in.length + col.out.length);
 
-    nextCol = (i + 1 <= simu.workflow.length ? simu.workflow[i + 1] : false);
+    nextCol = (i + 1 < simu.workflow.length ? simu.workflow[i + 1] : false);
     moveLimit = 999; // No limit to number of tasks we transition in one tick
 
     while(moveLimit-- > 0 && col.out.length > 0 && nextCol && nextCol.in.length < nextCol.wip) {
@@ -153,7 +169,7 @@ function tickSimulation() {
       t.addToLog(col.name + " workload " + t.daysLeft);
 
       t.moveDay = simu.tick;
-      t.colDone[col.name] = simu.tick;
+      t.colDone[i] = simu.tick;
 
       // TODO transition action
       if(simu.transition.action && simu.transition.action == "split") {
@@ -168,9 +184,10 @@ function tickSimulation() {
       nextCol.in.push(t); // TAX? + (nextCol.tDays * (nextCol.in.length / 10)));
       visuTransitionNote(t, col, nextCol);
     }
-    if(!nextCol && !result.first) {
-      result.first = simu.tick;
-    }
+    //if(!nextCol && result.first == 0) {
+    //  console.log("First " + i + " " + simu.workflow.length + " " + nextCol);
+    //  result.first = simu.tick;
+    //}
 
     // TODO: refactor, we burn down based on total team, then within the columns
     // TODO: Implemented the shared team (common)
@@ -211,9 +228,16 @@ function tickSimulation() {
     }
   }
 
+  // Count everything in progress this days
+  result.dayInProgress[simu.tick] = {x: simu.tick, y: getCountInProgress()};
+
   simu.tick++;
 }
 
+function tickSimulationFeatureban() {
+  // TODO: implement featureban simulator? - why?
+  //simu.workflow
+}
 /*function getCapacity(team, task) {
   cap = 0;
   for(t in team) {
@@ -225,9 +249,19 @@ function lastColumn() {
   return simu.workflow[simu.workflow.length - 1];
 }
 
+function getCountInProgress() {
+  cnt = 0;
+  for(i = 1; i < (simu.workflow.length - 1); i++) {
+    cnt += simu.workflow[i].in.length + simu.workflow[i].out.length;
+  }
+  return cnt;
+}
+
 function resetResult() {
   for(x in result)
     result[x] = 0;
+
+  result.dayInProgress = new Array();
 }
 
 function resetQueues() {
@@ -352,7 +386,14 @@ function renderGraph() {
               label: simu.desc,
               data: data,
               backgroundColor: graphSetColor.pop()
-          }]
+          },
+          {
+              label: "In progress",
+              data: result.dayInProgress,
+              backgroundColor: "#DDDDDD",
+              radius: 1
+          },
+        ]
       },
       options: {
           scales: {
