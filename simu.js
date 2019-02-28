@@ -291,8 +291,8 @@ function addTasks() {
       t.label = 'first';
     if(i == simu.refresh.size -1)
       t.label = 'last';
-    simu.workflow[0].out.push(t);
-    visuNewNote(t, simu.workflow[0], 'out');
+    simu.workflow[0].in.push(t);
+    visuNewNote(t, simu.workflow[0], 'in');
   }
 }
 
@@ -408,6 +408,7 @@ function renderGraph() {
 else {
   // Update graphed
   graph.data.datasets.push({label: simu.desc, data: data, backgroundColor: graphSetColor.pop()});
+  graph.data.datasets.push({label: "In progress (" + simu.desc + ")", data: result.dayInProgress, backgroundColor: "#CCCCCC", radius: 1});
   graph.update();
 }
 

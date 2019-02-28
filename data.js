@@ -25,7 +25,7 @@ simuSet.largewip.team = {'Dev': 6, 'Test': 3, 'Common': 0};
 simuSet['medium'] = $.extend(true, {}, simuDefault);
 simuSet.medium.desc = 'A3. Medium team WIPed';
 simuSet.medium.team = {'Dev': 4, 'Test': 3, 'Common': 0};
-simuSet.medium.workflow[1].wip = 3; //Dev
+simuSet.medium.workflow[1].wip = 2; //Dev
 simuSet.medium.workflow[2].wip = 3; //Test
 
 simuSet['small'] = $.extend(true, {}, simuDefault);
@@ -39,9 +39,9 @@ simuSet.single.desc = 'B1. Single person kanban';
 simuSet.single.workFactor.sizeTax = 'flat';
 simuSet.single.workFactor.taskVariation = 2;
 simuSet.single.workflow = [
-  {'id': 'col1', 'name': 'To do', 'wip': 9, 'in': [], 'out': []},
+  {'id': 'col1', 'name': 'To do', 'in': [], 'out': []},
   {'id': 'col2', 'name': 'Dev', 'lt': 12, 'wip': 9, 'in': [], 'out': []},
-  {'id': 'col3', 'name': 'Done', 'wip': 9, 'in': [], 'out': []}];
+  {'id': 'col3', 'name': 'Done', 'in': [], 'out': []}];
 simuSet.single.team = {'Dev': 1};
 
 simuSet['singlewip'] = $.extend(true, {}, simuDefault);
@@ -49,9 +49,9 @@ simuSet.singlewip.desc = 'B2. Single person kanban WIPed';
 simuSet.singlewip.workFactor.sizeTax = 'flat';
 simuSet.singlewip.workFactor.taskVariation = 2;
 simuSet.singlewip.workflow = [
-  {'id': 'col1', 'name': 'To do', 'wip': 9, 'in': [], 'out': []},
+  {'id': 'col1', 'name': 'To do', 'in': [], 'out': []},
   {'id': 'col2', 'name': 'Dev', 'lt': 12, 'wip': 1, 'in': [], 'out': []},
-  {'id': 'col3', 'name': 'Done', 'wip': 9, 'in': [], 'out': []}];
+  {'id': 'col3', 'name': 'Done', 'in': [], 'out': []}];
 simuSet.singlewip.team = {'Dev': 1};
 
 simuSet['rand'] = $.extend(true, {}, simuDefault);
