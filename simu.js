@@ -1,13 +1,13 @@
 result = {'days': 0, 'tasks': 0, 'first': 0, 'team': 0, 'capacity': 0, 'utilization': 0, 'factor': 0, 'cost': 0, 'dayInProgress': []};
-graph = null;
-graphSetColor = ["#FE938C" ,"#9CAFB7", "#D6DBB2", "#E24E1B", "#DB995A",  "#A5CBC3", "#ff6666", "#85CB33", "#100B00"];
 
 function Task(idx, size) {
   this.id = idx;
   this.type = 'task';
+  this.style = '';
   this.label = '';
   this.log = new Array();
   this.daysLeft = size;
+  this.totalWork = size;
   this.startDay = 0;
   this.colDone = new Array();
   this.addToLog = function(wf) {
@@ -16,7 +16,11 @@ function Task(idx, size) {
   this.getStatus = function() {
     cx = "";
     last = this.colDone[this.colDone.length - 1];
-    return "id:" + this.id + " begin:" + this.startDay + " leadtime:" + (last - this.startDay);
+    return "id:" + this.id + " begin:" + this.startDay + " leadtime:" + (last - this.startDay) + " worktime:" + this.totalWork + " flowEff:" + Math.round((this.totalWork / (last - this.startDay)) * 100) + "%";
+  }
+  this.setMoreWork = function(size) {
+    this.daysLeft = size;
+    this.totalWork += size;
   }
 }
 
@@ -40,7 +44,7 @@ function setupSimulation() {
   }
 
   for(i = 0; i < simu.workflow.length; i++) {
-    $('.columns').append('<div class="column" id="' + simu.workflow[i].id  + '"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="wait">&nbsp;</div><div class="counter">&nbsp;</div></div>');
+    $('.columns').append('<div class="column ' + simu.style + '" id="' + simu.workflow[i].id  + '"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div><div class="wait">&nbsp;</div><div class="counter">&nbsp;</div></div>');
 
     if(simu.workflow[i].wip && simu.workflow[i].wip > 0) {
       $('#' + simu.workflow[i].id + ' .info').html('<strong>' + simu.workflow[i].name + '</strong> (<span class="wip" contenteditable="true">' + simu.workflow[i].wip + '</span>)');
@@ -128,6 +132,13 @@ function stopSimulation() {
   simu.status = 'stop';
 }
 
+function getDoneAverages() {
+  // Get avg leadtime and flow eff
+  for(t in lastColumn().out) {
+    //
+  }
+}
+
 function timer() {
   if(simu.tick != -1 && simu.status == 'run') {
     tickSimulation();
@@ -158,7 +169,7 @@ function tickSimulation() {
       t = col.out.shift();
       if(Array.isArray(t)) console.log("A array");
       //console.log("out" + JSON.stringify(t));
-      t.daysLeft = nextCol.lt;// + (nextCol.in.length / 10 * nextCol.lt);
+      t.setMoreWork(nextCol.lt);// + (nextCol.in.length / 10 * nextCol.lt);
 
       if(simu.workFactor.taskVariation != 1) {
         modifier = Math.floor(Math.random() * t.daysLeft * simu.workFactor.taskVariation) - (t.daysLeft / 2 * simu.workFactor.taskVariation);
@@ -287,6 +298,7 @@ function addTasks() {
   for(i = 0; i < simu.refresh.size; i++) {
     t = new Task(simu.newId++, simu.workflow[0].lt);
     t.startDay = simu.tick;
+    t.style = simu.style;
     if(i == 0)
       t.label = 'first';
     if(i == simu.refresh.size -1)
@@ -310,7 +322,7 @@ function updateColumn(col) {
 
 function visuNewNote(t, col, inout) {
   // Visualize a new note'
-  $('#' + col.id + ' .' + inout).append('<div id="t' + t.id + '" class="postit ' + t.label + '" title="' + t.getStatus() + '">' + Math.floor(t.daysLeft) + '</div>').fadeIn('slow');
+  $('#' + col.id + ' .' + inout).append('<div id="t' + t.id + '" class="postit ' + t.style + ' ' + t.label + '" title="' + t.getStatus() + '">' + Math.floor(t.daysLeft) + '</div>').fadeIn('slow');
 }
 
 function visuBurnNote(t, col) {

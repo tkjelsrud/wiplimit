@@ -1,7 +1,9 @@
 <html>
 <head>
 <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
-<script src="simu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+
 <style>
   body {
     font-family: Courier;
@@ -45,42 +47,9 @@
     box-shadow: 2px 2px 2px #888888;
   }
 
-
-  #simu .column {
-    float: left;
-    width: 16em;
-    height: 32em;
-    background-color: #EEE;
-    margin: 4px;
-    box-shadow: 2px 2px 2px #888888;
-  }
-  #simu .column .in {
-    float: left;
-    width: 40%;
-    height: 100%;
-  }
-  #simu .column .out {
-    float: left;
-    width: 40%;
-    background-color: #DDD;
-  }
-  #simu .column .info {
-    width: auto;
-  }
-  #simu .bar {
-    width: 100%;
-    height: 4em;
-  }
-  #simu .postit {
-    float: left;
-    background-color: yellow;
-    font-family: Courier;
-    font-size:13px;
-    width: 3em;
-    height: 3em;
-    border: 1px solid grey;
-    margin: 4px;
-    box-shadow: 4px 4px 4px #888888;
+#graph {
+  width: 800px;
+  height: 600px;
   }
 </style>
 
@@ -89,6 +58,9 @@
   transitions = new Array("status", "Sprint");
   // Global data array
   data = {'nodes': []};
+  graph = null;
+  graphSetColor = ["#FE938C" ,"#9CAFB7", "#D6DBB2", "#E24E1B", "#DB995A",  "#A5CBC3", "#ff6666", "#85CB33"];
+
 
   function loadStorage() {
     data = window.localStorage.getItem("nodes");
@@ -124,12 +96,14 @@
       //console.log(json);
       for(i = 0; i < json.changelog.histories.length;i++) {
         cl = json.changelog.histories[i];
+        //console.log(cl);
         if(transitions.includes(cl.items[0].field)) {
           item['history'].push({'type': cl.items[0].field, 'date': cl.created, 'from': cl.items[0].fromString, 'to': cl.items[0].toString});
         }
       }
-      addOrUpdateItem(item);
+      c = addOrUpdateItem(item);
       saveStorage();
+      log("Item " + json.key + " updated, " + chg + " changes");
       drawTable();
     }
   }
@@ -168,6 +142,7 @@
   }
 
   function addOrUpdateItem(item) {
+    chg = 0;
     exItem = getItem(item.id);
     if(exItem) {
       exItem['type'] = item.type;
@@ -175,14 +150,18 @@
       //console.log("Old item found - merging")
       for(i = 0; i < item['history'].length; i++) {
         hist = item['history'][i];
-        if(!historyMatch(exItem, hist))
+        if(!historyMatch(exItem, hist)) {
           exItem['history'].push(hist);
+          chg++;
+        }
       }
       setItem(exItem);
     }
     else {
       data.nodes.push(item);
     }
+
+    return chg;
   }
 
   function drawTable() {
@@ -261,7 +240,7 @@
     $("#input").hide();
     $("#out").hide();
     $("#table").hide();
-    $("#simu").hide();
+    $("#graph").hide();
 
     if(v == "input") {
       $("#input").show();
@@ -270,8 +249,9 @@
     if(v == "table") {
       $("#table").show();
     }
-    if(v == "simu") {
-      $("#simu").show();
+    if(v == "graph") {
+      renderGraph();
+      $("#graph").show();
     }
   }
 
@@ -300,6 +280,76 @@
     //$("#log").fadeOut(60*60);
   }
 
+
+  function renderGraph() {
+    arr = new Array();
+
+    for(i = 0; i < data.nodes.length; i++) {
+      item = data.nodes[i];
+      hist = getHistoryPoints(item);
+
+      if(validItem(item, hist)) {
+        lt = dateDiff(hist.committed, hist.delivered);
+        arr.push(lt);
+      }
+    }
+    arr.sort(sortNumber);
+  /*
+    for(i = 0; i < lastColumn().out.length; i++) {
+      t = lastColumn().out[i];
+      start = 999;
+      end = 0;
+      for(c in t.colDone) {
+        if(t.colDone[c] < start)
+          start = t.colDone[c];
+        if(t.colDone[c] > end)
+          end = t.colDone[c];
+      }
+      arr.push(end - start);
+    }
+    arr.sort(sortNumber);*/
+    //console.log(arr);
+    grdata = new Array();
+    min = arr[0];
+    max = arr[arr.length - 1];
+    div = Math.floor((max - min) / 10.0);
+
+    for(i = 0; i < 10; i++) {
+      mi = min + (div * i);
+      ma = min + (div * i) + div;
+      cn = 0;
+      for(j = 0; j < arr.length; j++) {
+        if(arr[j] >= mi && arr[j] <= ma)
+          cn += 1;
+      }
+      grdata.push({x: mi, y: cn});
+   }
+
+   //graphcanvas
+   var ctx = document.getElementById("graphcanvas").getContext('2d');
+   if(graph == null) {
+     graph = new Chart(ctx, {
+        type: 'bubble',
+        data: {
+            datasets: [{
+                label: "test",
+                data: grdata,
+                backgroundColor: graphSetColor.pop()
+            }
+          ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'linear',
+                    position: 'bottom'
+                }]
+            }
+            }
+        });
+      }
+    }
+
   /*
   dt = new Date(Date.parse(data.nodes[0].created));
 
@@ -308,15 +358,18 @@
  var year = date.getFullYear();
 
  */
-
+   function sortNumber(a,b) {
+     return a - b;
+   }
 </script>
 </head>
 
 <body>
-  <div class="toolbar"><a href="javascript:void(view('input'));">Input</a>  <a href="javascript:void(view('table'));">Table</a> <a href="javascript:void(view('graph'));">Graph</a> <a href="javascript:void(view('simu'));">Simulator</a></div>
+  <div class="toolbar"><a href="javascript:void(view('input'));">Input</a>  <a href="javascript:void(view('table'));">Table</a> <a href="javascript:void(view('graph'));">Graph</a></div>
   <div id="log" onclick="$('#log').empty();">&nbsp;</div>
   <div id="input" style="background-color:#DDD">
     <p>Enter JIRA JSON (https://HOSTNAME/jira/rest/api/latest/issue/ISSUEKEY?expand=changelog)</p>
+    <p>https://HOSTNAME/rest/api/latest/issue/ISSUEKEY?expand=changelog</p>
     <textarea id="in"></textarea>
     <input type="submit" onclick="processInput()" value="Process" />
 
@@ -327,26 +380,15 @@
   <div id="table">&nbsp;
   </div>
 
-  <div id="simu">
-    <div class="bar"><div id="count">&nbsp;</div><a href="javascript:void(resetSimulation())">Reset</a>
-      <a href="javascript:void(startSimulation())">Start</a>
-      <a href="javascript:void(stopSimulation())">Stop</a> |
-      Set <a href="javascript:simu=simuBig;void(setupSimulation());">1.Big</a>
-      <a href="javascript:simu=simuMed;void(setupSimulation());">2.Med</a>
-      <a href="javascript:simu=simuSmall;void(setupSimulation());">3.Small</a>
-    </div>
-    <div id="simuout">&nbsp</div>
-    <div class="column" id="col1"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div></div>
-    <div class="column" id="col2"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div></div>
-    <div class="column" id="col3"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div></div>
-    <div class="column" id="col4"><div class="info">&nbsp;</div><div class="in">&nbsp;</div><div class="out">&nbsp;</div></div>
+  <div id="graph">
+    <canvas id="graphcanvas" width="800" height="600"></canvas>
   </div>
+
 
   <script type="text/javascript">
     loadStorage();
     drawTable();
     view("input");
-    setupSimulation();
   </script>
 </body>
 </html>

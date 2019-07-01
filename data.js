@@ -5,6 +5,7 @@ simuDefault = {
     {'id': 'col3', 'name': 'Test', 'lt': 14, 'wip': 0, 'in': [], 'out': []},
     {'id': 'col4', 'name': 'Done', 'wip': 0, 'in': [], 'out': []}
   ],
+  'style': '',
   'team': {'To do': 0, 'Done': 0, 'Dev': 2, 'Test': 1, 'Common': 2},
   'workFactor': {'sizeTax': 'loga', 'blockChance': 0.0, 'unblockChance': 0.0, 'taskVariation': 1},
   'transition': {'action': 'none'},
@@ -74,6 +75,22 @@ simuSet.randwip.workflow = [
   {'id': 'col3', 'name': 'Done', 'wip': 9, 'in': [], 'out': []}];
 simuSet.randwip.team = {'Dev': 2};
 
+simuSet['stream'] = $.extend(true, {}, simuDefault);
+simuSet.stream.desc = 'D1. Up and downstream';
+simuSet.stream.style = "slim";
+simuSet.stream.workflow = [
+  {'id': 'col1', 'name': 'Capture', 'in': [], 'out': []},
+  {'id': 'col2', 'name': 'Synthesis', 'teams': ['Analysis'], 'lt': 12, 'wip': 2, 'in': [], 'out': []},
+  {'id': 'col3', 'name': 'Analysis', 'teams': ['Analysis'], 'lt': 12, 'wip': 2, 'in': [], 'out': []},
+  {'id': 'col4', 'name': 'Stories to do', 'lt': 12, 'wip': 2, 'in': [], 'out': []},
+  {'id': 'col5', 'name': 'Development', 'teams': ['DevTest'], 'lt': 12, 'wip': 2, 'in': [], 'out': []},
+  {'id': 'col6', 'name': 'Test', 'teams': ['DevTest'], 'lt': 12, 'wip': 2, 'in': [], 'out': []},
+  {'id': 'col7', 'name': 'Ready', 'wip': 9, 'in': [], 'out': []},
+  {'id': 'col8', 'name': 'Deployment', 'teams': ['DevTest'], 'wip': 9, 'in': [], 'out': []},
+  {'id': 'col9', 'name': 'Verified', 'wip': 9, 'in': [], 'out': []}];
+simuSet.stream.team = {'Analysis': 2, 'DevTest': 8};
+simuSet.stream.refresh = {'tickMod': 50, 'size': 3, 'time': 200};
+
 /*simuSet['bieber'] = $.extend(true, {}, simuDefault);
 simuSet.bieber.desc = 'XX. 1000 teenagers at Bieber concert';
 simuSet.bieber.workFactor.taskVariation = 4;
@@ -84,44 +101,3 @@ simuSet.bieber.workflow = [
   {'id': 'col3', 'name': 'Done', 'wip': 9, 'in': [], 'out': []}];
 simuSet.bieber.team = {'Dev': 2};
 simuSet.bieber.refresh = {'tickMod': 999, 'size': 1000, 'time': 200};*/
-
-/*
-simuSmall = {
-  'name': 'sm', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
-    {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col2', 'name': 'Dev', 'cap': 3, 'lt': 12, 'tDays': 7, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col3', 'name': 'Test', 'cap': 2, 'lt': 14, 'tDays': 7, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col4', 'name': 'Done', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []}
-  ],
-  'refresh': {'tickMod': 15, 'size': 7, 'time': 200}
-};
-
-simuMassive = {
-  'name': 'xl', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
-    {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col2', 'name': 'Dev', 'cap': 12, 'lt': 12, 'tDays': 7, 'wip': 12, 'in': [], 'out': []},
-    {'id': 'col3', 'name': 'Test', 'cap': 12, 'lt': 14, 'tDays': 7, 'wip': 12, 'in': [], 'out': []},
-    {'id': 'col4', 'name': 'Done', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []}
-  ],
-  'refresh': {'tickMod': 15, 'size': 7, 'time': 200}
-};
-
-simuTiny= {
-  'name': 'xs', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
-    {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col2', 'name': 'Dev', 'cap': 2, 'lt': 12, 'tDays': 7, 'wip': 1, 'in': [], 'out': []},
-    {'id': 'col3', 'name': 'Test', 'cap': 1, 'lt': 14, 'tDays': 7, 'wip': 1, 'in': [], 'out': []},
-    {'id': 'col4', 'name': 'Done', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []}
-  ],
-  'refresh': {'tickMod': 15, 'size': 7, 'time': 200}
-};
-
-simuLargeWip= {
-  'name': 'lwip', 'tick': 0, 'status': 'stop', 'cost': 10000, 'speed': 60, 'columns': [
-    {'id': 'col1', 'name': 'To do', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col2', 'name': 'Dev', 'cap': 6, 'lt': 12, 'tDays': 7, 'wip': 3, 'in': [], 'out': []},
-    {'id': 'col3', 'name': 'Test', 'cap': 3, 'lt': 14, 'tDays': 7, 'wip': 2, 'in': [], 'out': []},
-    {'id': 'col4', 'name': 'Done', 'cap': 0, 'lt': 0, 'tDays': 0, 'wip': 2, 'in': [], 'out': []}
-  ],
-  'refresh': {'tickMod': 15, 'size': 7, 'time': 200}
-};*/
