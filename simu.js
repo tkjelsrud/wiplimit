@@ -1,3 +1,4 @@
+gGraph = null;
 result = {'days': 0, 'tasks': 0, 'first': 0, 'team': 0, 'capacity': 0, 'utilization': 0, 'factor': 0, 'cost': 0, 'dayInProgress': []};
 
 function Task(idx, size) {
@@ -390,8 +391,8 @@ function renderGraph() {
  //graphcanvas
  $("#graph").show();
  var ctx = document.getElementById("graphcanvas").getContext('2d');
- if(graph == null) {
-   graph = new Chart(ctx, {
+ if(gGraph == null) {
+   gGraph = new Chart(ctx, {
       type: 'bubble',
       data: {
           datasets: [{
@@ -419,9 +420,9 @@ function renderGraph() {
 }
 else {
   // Update graphed
-  graph.data.datasets.push({label: simu.desc, data: data, backgroundColor: graphSetColor.pop()});
-  graph.data.datasets.push({label: "In progress (" + simu.desc + ")", data: result.dayInProgress, backgroundColor: "#CCCCCC", radius: 1});
-  graph.update();
+  gGraph.data.datasets.push({label: simu.desc, data: data, backgroundColor: graphSetColor.pop()});
+  gGraph.data.datasets.push({label: "In progress (" + simu.desc + ")", data: result.dayInProgress, backgroundColor: "#CCCCCC", radius: 1});
+  gGraph.update();
 }
 
   //for(i = 0; i < group.length; i++) {
