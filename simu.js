@@ -1,4 +1,6 @@
 gGraph = null;
+graphSetColor = ["#FE938C" ,"#9CAFB7", "#D6DBB2", "#E24E1B", "#DB995A", "#A5CBC3", "#85CB33", "#100B00"];
+
 result = {'days': 0, 'tasks': 0, 'first': 0, 'team': 0, 'capacity': 0, 'utilization': 0, 'factor': 0, 'cost': 0, 'dayInProgress': []};
 
 function Task(idx, size) {
