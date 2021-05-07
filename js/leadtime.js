@@ -124,7 +124,7 @@
     hist = {'upstream': null, 'committed': null, 'test': null, 'delivered': null, 'deployed': null};
     for(j = 0; j < item.history.length; j++) {
       h = item.history[j];
-      if(h.to == "Discovery")
+      if(h.to == "Analysis")
         hist.upstream = h.date;
       if(!hist.committed && (h.to == "In Progress")) {
         hist.committed = h.date;
