@@ -33,7 +33,7 @@
       //console.log(json);
       for(i = 0; i < json.changelog.histories.length;i++) {
         cl = json.changelog.histories[i];
-        //console.log(cl);
+        console.log(cl);
         if(transitions.includes(cl.items[0].field)) {
           item['history'].push({'type': cl.items[0].field, 'date': cl.created, 'from': cl.items[0].fromString, 'to': cl.items[0].toString});
         }
@@ -126,7 +126,7 @@
       h = item.history[j];
       if(h.to == "Discovery")
         hist.upstream = h.date;
-      if(!hist.committed && (h.to == "Ready for development" || h.from == "Ready for development" || h.type == "Sprint")) {
+      if(!hist.committed && (h.to == "In Progress")) {
         hist.committed = h.date;
         if(!hist.upstream)
           hist.upstream = h.date;
