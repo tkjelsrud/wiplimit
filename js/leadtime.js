@@ -128,7 +128,7 @@
       h = item.history[j];
       if(h.to == "Analysis")
         hist.upstream = h.date;
-      if(!hist.committed && (h.to == "In Progress")) {
+      if(!hist.committed && (h.to == "In Progress" || h.to == "In development")) {
         hist.committed = h.date;
         if(!hist.upstream)
           hist.upstream = h.date;
