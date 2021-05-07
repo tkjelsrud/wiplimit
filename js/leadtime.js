@@ -102,6 +102,8 @@
   }
 
   function validItem(item, hist) {
+    console.log(item);
+    console.log(hist);
     // Refactor this (crap)
     //
     if('drop' in item && item.drop)
