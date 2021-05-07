@@ -126,7 +126,7 @@
     hist = {'upstream': null, 'committed': null, 'test': null, 'delivered': null, 'deployed': null};
     for(j = 0; j < item.history.length; j++) {
       h = item.history[j];
-      if(h.to == "Analysis")
+      if(h.to == "Analysis" || h.to == "Analysis & Design")
         hist.upstream = h.date;
       if(!hist.committed && (h.to == "In Progress" || h.to == "In development")) {
         hist.committed = h.date;
