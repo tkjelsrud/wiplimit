@@ -108,10 +108,10 @@
     //
     if('drop' in item && item.drop)
       return false;
-    if(!hist.committed)
-      return false;
-    if(dateDiff(hist.committed, hist.delivered) < 5)
-      return false;
+    //if(!hist.committed)
+    //  return false;
+    //if(dateDiff(hist.committed, hist.delivered) < 5)
+    //  return false;
     return true;
   }
 
@@ -128,12 +128,12 @@
       h = item.history[j];
       if(h.to == "Analysis" || h.to == "Analysis & Design")
         hist.upstream = h.date;
-      if(!hist.committed && (h.to == "In Progress" || h.to == "In development")) {
+      if(!hist.committed && (h.to == "In Progress" || h.to == "In development" || h.to == "Ready for development")) {
         hist.committed = h.date;
         if(!hist.upstream)
           hist.upstream = h.date;
       }
-      if(h.to == "SIT" || h.to == "UAT") {
+      if(h.to == "Ready for testing" || h.to == "SIT" || h.to == "UAT") {
         if(hist.test == null || Date.parse(hist.test) <= Date.parse(h.date))
           hist.test = h.date;
       }
