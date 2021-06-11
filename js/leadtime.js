@@ -13,9 +13,9 @@
     window.localStorage.setItem("nodes" + sid, JSON.stringify(data));
   }
 
-  function purgeStorage() {
+  function purgeStorage(sid) {
     data = {'nodes': []};
-    saveStorage();
+    saveStorage(sid);
   }
 
   function processInput() {
