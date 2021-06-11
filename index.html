@@ -257,7 +257,10 @@
 
 
   <script type="text/javascript">
-    loadStorage();
+    let params = new URLSearchParams(document.location.search.substring(1));
+    var sid = params.get("sid");
+    
+    loadStorage(sid);
     drawTable();
     view("input");
   </script>
