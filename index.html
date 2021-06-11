@@ -155,12 +155,11 @@
     for(i = 0; i < data.nodes.length; i++) {
       item = data.nodes[i];
       hist = getHistoryPoints(item);
-      //console.log(hist);
+      console.log(hist);
 
       if(validItem(item, hist)) {
         lt = dateDiff(hist.committed, hist.delivered);
         arr.push(lt);
-        console.log("valid");
       }
     }
     arr.sort(sortNumber);
