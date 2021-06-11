@@ -1,6 +1,6 @@
 
-  function loadStorage() {
-    data = window.localStorage.getItem("nodes");
+  function loadStorage(sid = "") {
+    data = window.localStorage.getItem("nodes" + sid);
     if(data) {
       data = JSON.parse(data);
     }
@@ -9,8 +9,8 @@
     }
   }
 
-  function saveStorage() {
-    window.localStorage.setItem("nodes", JSON.stringify(data));
+  function saveStorage(sid = "") {
+    window.localStorage.setItem("nodes" + sid, JSON.stringify(data));
   }
 
   function purgeStorage() {
