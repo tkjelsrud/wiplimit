@@ -155,15 +155,16 @@
     for(i = 0; i < data.nodes.length; i++) {
       item = data.nodes[i];
       hist = getHistoryPoints(item);
-      console.log(hist);
+      //console.log(hist);
 
       if(validItem(item, hist)) {
         lt = dateDiff(hist.committed, hist.delivered);
-        arr.push(lt);
+        if(lt)
+        	arr.push(lt);
       }
     }
     arr.sort(sortNumber);
-  /*
+    /*
     for(i = 0; i < lastColumn().out.length; i++) {
       t = lastColumn().out[i];
       start = 999;
@@ -177,6 +178,7 @@
       arr.push(end - start);
     }
     arr.sort(sortNumber);*/
+    
     console.log(arr);
     grdata = new Array();
     min = arr[0];
