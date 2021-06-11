@@ -78,7 +78,7 @@
     $("#out").empty();
     $("#out").append("<p>Data points (history points)</p>")
     $("#table").empty();
-    tabHtml = ("<table><tr><th>-</th><th>KEY</th><th>Type</th><th>Created</th><th>Backlog</th><th>Upstream</th><th>Committed</th><th>In dev</th><th>In test</th><th>Lead time</th><th>Delivered</th><th>Deployed</th></tr>");
+    tabHtml = ("<table><tr><th>-</th><th>KEY</th><th>Type</th><th>Created</th><th>Backlog</th><th>Upstream</th><th>Committed</th><th>In dev</th><th>In test</th><th>Cycle time</th><th>Delivered</th><th>Deployed</th></tr>");
     for(i = 0; i < data.nodes.length; i++) {
       item = data.nodes[i];
       hist = getHistoryPoints(item);
@@ -155,6 +155,7 @@
     for(i = 0; i < data.nodes.length; i++) {
       item = data.nodes[i];
       hist = getHistoryPoints(item);
+      console.log(hist);
 
       if(validItem(item, hist)) {
         lt = dateDiff(hist.committed, hist.delivered);
