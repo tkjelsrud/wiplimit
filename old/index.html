@@ -1,0 +1,268 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+<script src="js/leadtime.js"></script>
+<style>
+  :root {
+    --colorA: #216583;
+    --colorB: #216583;
+    --colorC: #f76262;
+    --colorD: #fff1c1;
+  }
+  body {
+    font-family: Verdana;
+    margin: 0;
+  }
+  .toolbar {
+    background-color: var(--colorA);
+    padding: 0.4em;
+    width: 100%;
+    height: 2em;
+    -webkit-box-shadow: 0px 10px 5px -4px rgba(194,194,194,0.59);
+    -moz-box-shadow: 0px 10px 5px -4px rgba(194,194,194,0.59);
+    box-shadow: 0px 10px 5px -4px rgba(194,194,194,0.59);
+  }
+  .toolbar a {
+    margin-right: 2em;
+    color: var(--colorD);
+  }
+  #table {
+
+  }
+  table .row:nth-child(even) {background: #CCC}
+
+  #table div {
+    float: left;
+    width: 7em;
+    text-align: right;
+    font-size: 13px;
+  }
+
+  #out {
+    font-size: 11px;
+  }
+  #log {
+    margin-bottom: 2em;
+    font-size: 11px;
+    color: #999;
+  }
+
+  #simuout {
+    margin-bottom: 2em;
+    font-size: 12px;
+    color: #999;
+    width: 100%;
+    background-color: #E7ED87;
+    border: 1px solid grey;
+    box-shadow: 2px 2px 2px #888888;
+  }
+
+#graph {
+  width: 800px;
+  height: 600px;
+  }
+</style>
+
+<script type="text/javascript">
+  // Configuration (move later)
+  transitions = new Array("status", "Sprint");
+  // Global data array
+  data = {'nodes': []};
+  graph = null;
+  graphSetColor = ["#FE938C" ,"#9CAFB7", "#D6DBB2", "#E24E1B", "#DB995A",  "#A5CBC3", "#ff6666", "#85CB33"];
+
+
+  function drawTable() {
+    $("#out").empty();
+    $("#out").append("<p>Data points (history points)</p>")
+    $("#table").empty();
+    tabHtml = ("<table><tr><th>-</th><th>KEY</th><th>Type</th><th>Created</th><th>Backlog</th><th>Upstream</th><th>Committed</th><th>In dev</th><th>In test</th><th>Cycle time</th><th>Delivered</th><th>Deployed</th></tr>");
+    for(i = 0; i < data.nodes.length; i++) {
+      item = data.nodes[i];
+      hist = getHistoryPoints(item);
+      //console.log(hist);
+
+      $("#out").append("" + item.id + " (" + item.history.length + ")<br/>");
+
+      if(validItem(item, hist)) {
+        tabHtml += ("<tr><td>[<a href=\"javascript:drop('" + item.id + "');void(drawTable())\">X</a>]</td><td>" + item.id + "</td><td>" + item.type + "</td><td>" + shortDate(item.created) + "</td>");
+        tabHtml += ("<td title=\"" + shortDate(hist.upstream) + "\">" + dateDiff(item.created, hist.upstream) + "</td><td>" + dateDiff(hist.upstream, hist.committed) + "</td><td>" + shortDate(hist.committed) + "</td>");
+        tabHtml += ("<td title=\"" + shortDate(hist.committed)  + "\">" + dateDiff(hist.committed, hist.test) + "</td><td>" + dateDiff(hist.test, hist.delivered) + "</td><td>" + dateDiff(hist.committed, hist.delivered)
+          + "</td><td>" + shortDate(hist.delivered) + "</td><td>" + shortDate(hist.deployed) + "</td></tr>");
+      }
+      else {
+        log("Item dropped " + item.id)
+      }
+
+    }
+    //console.log(tabHtml);
+    $("#table").append(tabHtml + "</table>");
+  }
+
+  // Change views
+  function view(v) {
+    // Hide all
+    //$("#log").empty();
+    $("#input").hide();
+    $("#out").hide();
+    $("#table").hide();
+    $("#graph").hide();
+
+    if(v == "input") {
+      $("#input").show();
+      $("#out").show();
+    }
+    if(v == "table") {
+      $("#table").show();
+    }
+    if(v == "graph") {
+      renderGraph();
+      $("#graph").show();
+    }
+  }
+
+  function shortDate(dt) {
+    if(dt && dt != "0") {
+      dt = new Date(Date.parse(dt));
+      return dt.getDate() + "." + (parseInt(dt.getMonth()) + 1) + "." + dt.getFullYear();
+    }
+    return "";
+  }
+
+  function dateDiff(dtA, dtB) {
+    //console.log(dtA + "-" + dtB);
+    dtA = new Date(Date.parse(dtA));
+    dtB = new Date(Date.parse(dtB));
+    if(!(dtB instanceof Date) || isNaN(dtB))
+      dtB = new Date();
+
+    var oneDay = 24*60*60*1000;
+
+    return Math.round(Math.abs((dtB.getTime() - dtA.getTime())/(oneDay)));
+  }
+
+  function log(msg) {
+    $("#log").append("<div>" + msg + "</div>");
+    //$("#log").fadeOut(60*60);
+  }
+
+
+  function renderGraph() {
+    arr = new Array();
+
+    for(i = 0; i < data.nodes.length; i++) {
+      item = data.nodes[i];
+      hist = getHistoryPoints(item);
+      //console.log(hist);
+
+      if(validItem(item, hist)) {
+        lt = dateDiff(hist.committed, hist.delivered);
+        if(lt)
+        	arr.push(lt);
+      }
+    }
+    arr.sort(sortNumber);
+    /*
+    for(i = 0; i < lastColumn().out.length; i++) {
+      t = lastColumn().out[i];
+      start = 999;
+      end = 0;
+      for(c in t.colDone) {
+        if(t.colDone[c] < start)
+          start = t.colDone[c];
+        if(t.colDone[c] > end)
+          end = t.colDone[c];
+      }
+      arr.push(end - start);
+    }
+    arr.sort(sortNumber);*/
+    
+    console.log(arr);
+    grdata = new Array();
+    min = arr[0];
+    max = arr[arr.length - 1];
+    div = Math.floor((max - min) / 10.0);
+
+    for(i = 0; i < 10; i++) {
+      mi = min + (div * i);
+      ma = min + (div * i) + div;
+      cn = 0;
+      for(j = 0; j < arr.length; j++) {
+        if(arr[j] >= mi && arr[j] <= ma)
+          cn += 1;
+      }
+      grdata.push({x: mi, y: cn});
+   }
+
+   //graphcanvas
+   var ctx = document.getElementById("graphcanvas").getContext('2d');
+   if(graph == null) {
+     graph = new Chart(ctx, {
+        type: 'bubble',
+        data: {
+            datasets: [{
+                label: "Lead time",
+                data: grdata,
+                backgroundColor: graphSetColor.pop()
+            }
+          ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'linear',
+                    position: 'bottom'
+                }]
+            }
+            }
+        });
+      }
+    }
+
+  /*
+  dt = new Date(Date.parse(data.nodes[0].created));
+
+  var day = date.getDate();
+ var monthIndex = date.getMonth();
+ var year = date.getFullYear();
+
+ */
+   function sortNumber(a,b) {
+     return a - b;
+   }
+</script>
+</head>
+
+<body>
+  <div class="toolbar"><a href="javascript:void(view('input'));">Input</a>  <a href="javascript:void(view('table'));">Table</a> <a href="javascript:void(view('graph'));">Graph</a></div>
+  <div id="log" onclick="$('#log').empty();">&nbsp;</div>
+  <div id="input" style="background-color:#DDD">
+    <p>Enter JIRA JSON (https://HOSTNAME/jira/rest/api/latest/issue/ISSUEKEY?expand=changelog)</p>
+    <p>https://HOSTNAME/rest/api/latest/issue/ISSUEKEY?expand=changelog</p>
+    <textarea id="in" style="margin: 0px; width: 500px; height: 200px;"></textarea>
+    <input type="submit" onclick="processInput()" value="Process" />
+
+  </div>
+
+  <div id="out" style="font-family:Courier">&nbsp;</div>
+
+  <div id="table">&nbsp;
+  </div>
+
+  <div id="graph">
+    <canvas id="graphcanvas" width="800" height="600"></canvas>
+  </div>
+
+
+  <script type="text/javascript">
+    let params = new URLSearchParams(document.location.search.substring(1));
+    var sid = params.get("sid");
+    
+    loadStorage(sid);
+    drawTable();
+    view("input");
+  </script>
+</body>
+</html>
