@@ -7,6 +7,6 @@ Start to run a simulation on 200 days. New items (7) are added to backlog every 
 
 Space can be used to pause and unpause simulation during execution
 #
-The simulation is "fair" in that it does not give any bonuses or changes to teams that use a wip limit, nor does it assume everyone can pitch in on all work. It simply shows that teams that do less in parallell can be more efficient and get more done.
+The simulation is "fair" in that it does not give any bonuses or changes to teams that use a wip limit, nor does it assume everyone can pitch in on all work. It simply shows that teams that do less in parallell can be more efficient and get more done. However, it also shows that if the team is too small compared to the work-at-hand efficiency will also drop, even with WIP limits.
 #
 https://tkjelsrud.github.io/wiplimit/simu.html
