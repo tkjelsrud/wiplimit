@@ -340,7 +340,7 @@ function visuTransitionNote(t, colA, colB) {
 }
 
 function visuWorkNote(t) {
-  $('#t' + t.id).html(Math.round(t.daysLeft));
+  $('#t' + t.id).html(Math.round(t.daysLeft) + " / " + t.totalWork);
   // TODO: Show a small progress bar inside the notes to better visualize remaining work
 }
 
