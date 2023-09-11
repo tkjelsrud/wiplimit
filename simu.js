@@ -123,7 +123,8 @@ function stopSimulation() {
 
   simLog('<div style="clear:both">' + simu.desc + '</div><div style="color:' + color + '"">' + result.days + "</div><div>" + result.tasks +
          "</div><div>" + result.team + "</div><div>" + result.utilization + "</div><div>" +
-         result.factor + "</div><div>" + result.cost + "</div>");
+         result.factor + "</div>"); 
+  //<div>" + result.cost + "</div>
   //<div>" + result.first + "</div>
 
   renderGraph();
