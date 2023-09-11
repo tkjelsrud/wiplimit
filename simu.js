@@ -40,7 +40,8 @@ function setupSimulation() {
   $('.columns').empty();
 
   // Show team setup
-  $('#team').html('<img src="http://webxity.com/wp-content/uploads/2015/08/bootwise-icon-02.png" style="width:30px;vertical-align:middle;margin-right:4px" /><strong>Team</strong>&nbsp;&nbsp;&nbsp;');
+  //<img src="http://webxity.com/wp-content/uploads/2015/08/bootwise-icon-02.png" style="width:30px;vertical-align:middle;margin-right:4px" />
+  $('#team').html('<strong>Team</strong>&nbsp;&nbsp;&nbsp;');
   for(i in simu.team) {
     if(simu.team[i] > 0)
       $('#team').append('<span>' + i + ' ' + simu.team[i] + '</span>&nbsp;&nbsp;');
